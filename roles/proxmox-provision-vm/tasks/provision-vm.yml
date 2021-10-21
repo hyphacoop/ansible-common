@@ -1,0 +1,96 @@
+---
+- name: Clone VM
+  proxmox_kvm:
+    api_user: "{{ api_user }}"
+    api_password: "{{ api_password }}"
+    api_host: "{{ api_host }}"
+
+    clone: "{{ clone }}"
+    newid: "{{ vm_id }}"
+    full: true
+    name: "{{ vm_name }}"
+    node: "{{ node }}"
+    storage: "{{ storage }}"
+    format: qcow2
+  register: clone_vm
+
+- name: Waiting for Clone to finish
+  pause:
+    seconds: 10
+  when: clone_vm.changed
+
+- name: Configure VM
+  proxmox_kvm:
+    api_user: "{{ api_user }}"
+    api_password: "{{ api_password }}"
+    api_host: "{{ api_host }}"
+    node: "{{ node }}"
+    name: "{{ vm_name }}"
+    cpu: "{{ vm_cpu }}"
+    cores: "{{ vm_cores }}"
+    cpuunits: "{{ vm_cpuunits }}"
+    memory: "{{ vm_ram }}"
+    update: true
+
+- name: Auth using API
+  uri:
+    validate_certs: false
+    url: "https://{{ api_host }}:8006/api2/json/access/ticket"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      username: "{{ api_user }}"
+      password: "{{ api_password }}"
+  register: auth
+
+- name: Resize disk using API
+  uri:
+    validate_certs: false
+    url: "https://{{ api_host }}:8006/api2/json/nodes/{{ node }}/qemu/{{ vm_id }}/resize"
+    method: PUT
+    headers: 
+      Cookie: "PVEAuthCookie={{ auth.json.data.ticket }}"
+      CSRFPreventionToken: "{{ auth.json.data.CSRFPreventionToken }}"
+    body_format: form-urlencoded
+    body:
+      disk: virtio0
+      size: "{{ vm_disk }}"
+  register: vm_resize
+  retries: 10
+  until: vm_resize is success
+
+- name: Set cloud-init config using API
+  uri:
+    validate_certs: false
+    url: "https://{{ api_host }}:8006/api2/json/nodes/{{ node }}/qemu/{{ vm_id }}/config"
+    method: POST
+    headers:
+      Cookie: "PVEAuthCookie={{ auth.json.data.ticket }}"
+      CSRFPreventionToken: "{{ auth.json.data.CSRFPreventionToken }}"
+    body_format: form-urlencoded
+    body:
+      nameserver: "{{ nameserver }}"
+      searchdomain: "{{ search_domain }}"
+      ciuser: "{{ vm_username }}"
+      net0: "virtio={{ vm_mac_0 }},bridge={{ vm_bridge_0 }}"
+      ipconfig0: "gw={{ vm_gw4_0 }},gw6={{ vm_gw6_0 }},ip={{ vm_ip4_0 }},ip6={{ vm_ip6_0 }}"
+      sshkeys: "{{ lookup('file', vm_sshkey_file ) | urlencode | replace('/','%2F') }}"
+      onboot: "1"
+
+- name: Start VM
+  proxmox_kvm:
+    api_user: "{{ api_user }}"
+    api_password: "{{ api_password }}"
+    api_host: "{{ api_host }}"
+    node: "{{ node }}"
+    name: "{{ vm_name }}"
+    state: started
+  register: start_vm
+
+- name: Wait for SSH to be ready {{ vm_name }}
+  wait_for:
+    port: 22
+    host: "{{ vm_name }}"
+    search_regex: OpenSSH
+    delay: 10
+  when: start_vm.changed

@@ -1,0 +1,21 @@
+---
+- name: Disable root login via SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PermitRootLogin.*"
+    line: "PermitRootLogin no"
+    validate: "/usr/sbin/sshd -tf %s"
+    backup: true
+  notify:
+    - Restart sshd
+  become: yes
+
+- name: Disable password authentication for SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication.*"
+    line: "PasswordAuthentication no"
+    validate: "/usr/sbin/sshd -tf %s"
+  notify:
+    - Restart sshd
+  become: yes

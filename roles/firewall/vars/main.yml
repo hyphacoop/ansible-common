@@ -1,0 +1,8 @@
+---
+# IPv6 admin IP subnets
+ipv6_admin_subs:
+  - 2607:5300:203:4014:4879:7068:6149:4e46/128
+
+# IPv4 admin IPs
+ipv4_admin_subs:
+  - 10.0.1.2/32

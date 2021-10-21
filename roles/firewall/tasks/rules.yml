@@ -1,0 +1,166 @@
+---
+# IPv6 rules
+- name: Set ip6tables to ACCEPT
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    policy: ACCEPT
+
+- name: Flush ip6tables
+  iptables:
+    ip_version: ipv6
+    chain: "{{ item }}"
+    flush: yes
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
+
+- name: ip6tables Allow ICMP
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    protocol: ipv6-icmp
+    jump: ACCEPT
+
+- name: ip6tables Allow SSH from ipv6_admin_subs
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    source: "{{ item }}"
+    destination_port: "22"
+    jump: ACCEPT
+  with_items: "{{ ipv6_admin_subs }}"
+
+- name: ip6tables Allow nginx TCP 443
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    destination_port: "443"
+    jump: ACCEPT
+
+- name: ip6tables Allow nginx TCP 80
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    destination_port: "80"
+    jump: ACCEPT
+
+- name: iptables Allow nginx TCP 25
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    destination_port: "25"
+    jump: ACCEPT
+
+
+- name: ip6tables Allow ESTABLISHED RELATED
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+
+- name: ip6tables Allow all for lo
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+
+- name: Set ip6tables to DROP
+  iptables:
+    ip_version: ipv6
+    chain: INPUT
+    policy: DROP
+
+- name: "ip6tables-save"
+  shell: ip6tables-save > /etc/iptables/rules.v6
+
+# IPv4 rules
+- name: Set iptables to ACCEPT
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    policy: ACCEPT
+
+- name: Flush iptables
+  iptables:
+    ip_version: ipv4
+    chain: "{{ item }}"
+    flush: yes
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
+
+- name: iptables Allow ICMP
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    protocol: icmp
+    jump: ACCEPT
+
+- name: iptables Allow SSH from ipv4_admin_subs
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    source: "{{ item }}"
+    destination_port: "22"
+    jump: ACCEPT
+  with_items: "{{ ipv4_admin_subs }}"
+
+- name: iptables Allow nginx TCP 443
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    destination_port: "443"
+    jump: ACCEPT
+
+- name: iptables Allow nginx TCP 80
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    destination_port: "80"
+    jump: ACCEPT
+
+- name: iptables Allow nginx TCP 25
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    protocol: tcp
+    in_interface: eth0
+    destination_port: "25"
+    jump: ACCEPT
+
+- name: iptables Allow ESTABLISHED RELATED
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+
+- name: iptables Allow all for lo
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+
+
+- name: Set iptables to DROP
+  iptables:
+    ip_version: ipv4
+    chain: INPUT
+    policy: DROP
+
+- name: "iptables-save"
+  shell: iptables-save > /etc/iptables/rules.v4
