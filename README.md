@@ -4,11 +4,15 @@
 `requirements.yml`
 ```
 ---
-collection:
+collections:
 - name: https://github.com/hyphacoop/ansible-proxmox.git
   type: git
 ```
+install
 
+```
+ansible-galaxy insatll -r requirements.yml
+```
 ## common
 
 `common_upgrade`: (true) Upgrade server using `apt upgrade`
