@@ -16,12 +16,17 @@ ansible-galaxy insatll -r requirements.yml
 ## common
 
 `common_upgrade`: (true) Upgrade server using `apt upgrade`
+
 `common_basic`: (true) Install additional usefull tools like `curl` and `htop` and `mtr`
+
+`common_build`: (false) Build essetials and git
+
 `common_timezone`: If define sets timezone IE: `America/Toronto`
 
 ## firewall
 
 `ipv6_admin_subs:` IPv6 addresses
+
 `ipv4_admin_subs:` IPv4 addresses
 
 ## harden_ssh
@@ -39,8 +44,11 @@ Prepeare proxmox server for ansible deploments
 Should apply `proxmox_server` to KVM to install promoxer
 
 `add_local_host:` adds host name and ip pair to local /etc/hosts
+
 `pve_kvm_sshkeys:` defines SSH keys to be installed on KVM host
+
 `kvm_start:` Start server and wait for it to start
+
 
 ### Define KVM Nodes Example
 
