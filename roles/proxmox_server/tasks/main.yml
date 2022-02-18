@@ -1,0 +1,69 @@
+---
+- name: "Install python"
+  apt:
+    name:
+      - python3-pip
+      - python
+    state: present
+- name: "Install proxmoxer"
+  pip:
+    name: proxmoxer 
+
+- name: "Set KVM Credentials"
+  set_fact:
+    proxmox_api_host: "{{proxmox_server[ansible_hostname]['api_host'] }}"
+    proxmox_api_password: "{{proxmox_server[ansible_hostname]['api_password'] }}"
+    proxmox_api_user: "{{proxmox_server[ansible_hostname]['api_user'] }}"
+
+- name: download cloud image
+  get_url:
+    url: https://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.qcow2
+    dest: /root/debian10.qcow2
+
+- name: Create debian VM
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox_api_user }}"
+    api_password: "{{ proxmox_api_password }}"
+    api_host: "{{ proxmox_api_host }}"
+    vmid: 9002
+    node: "{{ ansible_hostname }}"
+    name: "Debian10"
+
+    scsihw: virtio-scsi-pci
+    scsi:
+      scsi0: 'local:1,format=raw'
+    ide:
+      ide2: 'local:cloudinit,format=qcow2'
+    bootdisk: scsi0
+
+    ciuser: sysadmin
+    cipassword: password
+    net:
+      net0: 'virtio,bridge=vmbr0'
+    ipconfig:
+      ipconfig0: 'ip=192.168.56.230/24'
+    vga: std
+    cpu: host
+    template: yes
+    proxmox_default_behavior: compatibility
+  register: vm_created 
+
+- name: import init disk
+  ansible.builtin.command:
+    cmd: "qm importdisk 9002 /root/debian10.qcow2 local --format qcow2"
+  when: vm_created.changed
+  register: vm_image
+
+- name: Attach base image disk
+  ansible.builtin.lineinfile:
+    path: /etc/pve/local/qemu-server/9002.conf
+    regexp: '^scsi0:.*'
+    line: 'scsi0: local:9002/vm-9002-disk-1.qcow2'
+  when: vm_created.changed
+
+- name: Delete unused image disk
+  ansible.builtin.lineinfile:
+    path: /etc/pve/local/qemu-server/9002.conf
+    regexp: '^unused0:.*'
+    state: absent
+  when: vm_created.changed

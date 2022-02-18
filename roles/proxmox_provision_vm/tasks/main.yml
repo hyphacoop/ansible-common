@@ -1,0 +1,141 @@
+---
+- name: "Set KVM Credentials"
+  set_fact:
+    proxmox_api_host: "{{proxmox_server[node]['api_host'] }}"
+    proxmox_api_password: "{{proxmox_server[node]['api_password'] }}"
+    proxmox_api_user: "{{proxmox_server[node]['api_user'] }}"
+
+- name: "Set IP Credentials"
+  set_fact:
+    pve_kvm_ipconfig:
+      ipconfig0: "ip={{ kvm_ip_address }}/24,gw={{ kvm_gw_address }}"
+  when: kvm_ip_address is defined
+
+- name: "Add local host"
+  become: yes
+  local_action:
+    module: lineinfile
+    path: /etc/hosts
+    search_string: "{{ inventory_hostname }}"
+    line: "{{ kvm_ip_address }} {{ inventory_hostname }}"
+  when: kvm_ip_address is defined
+
+
+- name: Create new VM with minimal options
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox_api_user }}"
+    api_password: "{{ proxmox_api_password }}"
+    api_host: "{{ proxmox_api_host }}"
+    name: "{{ inventory_hostname }}"
+    node: "{{ node }}"
+    clone: "{{ kvm_template }}"
+    full: true
+    format: qcow2
+    newid: "{{ kvm_id }}"
+
+  register: pve_kvm_virtual_created
+  delegate_to: "{{ node }}"
+
+
+- name: "Post-clone configuration: update virtual machine resources"
+  community.general.proxmox_kvm:
+    update: "{{ pve_kvm_update | default('yes') }}"
+    node: "{{ node }}"
+    api_user: "{{ proxmox_api_user }}"
+    api_password: "{{ proxmox_api_password }}"
+    api_host: "{{ proxmox_api_host }}"
+    vmid: "{{ kvm_id }}"
+    proxmox_default_behavior: "{{ pve_kvm_proxmox_default_behavior | default('compatibility') }}"
+    validate_certs: "{{ pve_kvm_validate_certs | default(omit) }}"
+    name: "{{ pve_hostname | default(omit) }}"
+    timeout: "{{ pve_kvm_timeout | default(omit) }}"
+    description: "{{ pve_kvm_description | default(omit) }}"
+    kvm: "{{ pve_kvm_hardware_virtualization | default(omit) }}"
+    ostype: "{{ pve_kvm_ostype | default(omit) }}"
+    sockets: "{{ pve_kvm_sockets | default(omit) }}"
+    cores: "{{ pve_kvm_cores | default(omit) }}"
+    cpu: "{{ pve_kvm_cpu | default(omit) }}"
+    cpuunits: "{{ pve_kvm_cpuunits | default(omit) }}"
+    cpulimit: "{{ pve_kvm_cpulimit | default(omit) }}"
+    memory: "{{ pve_kvm_memory | default(omit) }}"
+    balloon: "{{ pve_kvm_balloon | default(omit) }}"
+    vga: "{{ pve_kvm_vga | default(omit) }}"
+    acpi: "{{ pve_kvm_acpi | default(omit) }}"
+    agent: "{{ pve_kvm_agent | default(omit) }}"
+    args: "{{ pve_kvm_args | default(omit) }}"
+    autostart: "{{ pve_kvm_autostart | default(omit) }}"
+    bios: "{{ pve_kvm_bios | default(omit) }}"
+    boot: "{{ pve_kvm_boot | default(omit) }}"
+    bootdisk: "{{ pve_kvm_bootdisk | default(omit) }}"
+    citype: "{{ pve_kvm_citype | default(omit) }}"
+    cicustom: "{{ pve_kvm_cicustom | default(omit) }}"
+    ciuser: "{{ pve_kvm_ciuser | default(omit) }}"
+    cipassword: "{{ pve_kvm_cipassword | default(omit) }}"
+    sshkeys: "{{ pve_kvm_sshkeys | default(omit) }}"
+    ipconfig: "{{ pve_kvm_ipconfig | default(omit) }}"
+    nameservers: "{{ pve_kvm_nameservers | default(omit) }}"
+    searchdomains: "{{ pve_kvm_searchdomains | default(omit) }}"
+    delete: "{{ pve_kvm_delete | default(omit) }}"
+    digest: "{{ pve_kvm_digest | default(omit) }}"
+    force: "{{ pve_kvm_force | default(omit) }}"
+    freeze: "{{ pve_kvm_freeze | default(omit) }}"
+    hostpci: "{{ pve_kvm_hostpci | default(omit) }}"
+    hotplug: "{{ pve_kvm_hotplug | default(omit) }}"
+    hugepages: "{{ pve_kvm_hugepages | default(omit) }}"
+    keyboard: "{{ pve_kvm_keyboard | default(omit) }}"
+    localtime: "{{ pve_kvm_localtime | default(omit) }}"
+    lock: "{{ pve_kvm_lock | default(omit) }}"
+    machine: "{{ pve_kvm_machine | default(omit) }}"
+    migrate_downtime: "{{ pve_kvm_migrate_downtime | default(omit) }}"
+    migrate_speed: "{{ pve_kvm_migrate_speed | default(omit) }}"
+    numa: "{{ pve_kvm_numa | default(omit) }}"
+    numa_enabled: "{{ pve_kvm_numa_enabled | default(omit) }}"
+    onboot: "{{ pve_onboot | default(omit) }}"
+    parallel: "{{ pve_kvm_parallel | default(omit) }}"
+    pool: "{{ pve_kvm_pool | default(omit) }}"
+    protection: "{{ pve_kvm_protection | default(omit) }}"
+    reboot: "{{ pve_kvm_reboot | default(omit) }}"
+    revert: "{{ pve_kvm_revert | default(omit) }}"
+    scsihw: "{{ pve_kvm_scsihw | default(omit) }}"
+    serial: "{{ pve_kvm_serial | default(omit) }}"
+    shares: "{{ pve_kvm_shares | default(omit) }}"
+    skiplock: "{{ pve_kvm_skiplock | default(omit) }}"
+    smbios: "{{ pve_kvm_smbios | default(omit) }}"
+    startdate: "{{ pve_kvm_startdate | default(omit) }}"
+    startup: "{{ pve_kvm_startup | default(omit) }}"
+    state: "{{ pve_kvm_state | default(omit) }}"
+    tablet: "{{ pve_kvm_tablet | default(omit) }}"
+    tags: "{{ pve_kvm_tags | default(omit) }}"
+    tdf: "{{ pve_kvm_tdf | default(omit) }}"
+    vcpus: "{{ pve_kvm_vcpus | default(omit) }}"
+    watchdog: "{{ pve_kvm_watchdog | default(omit) }}"
+  delegate_to: "{{ node }}"
+
+- name: "Grow up virtual machine disks"
+  ansible.builtin.shell: 
+    cmd: "sudo qm resize {{ kvm_id }} scsi0 {{ pve_disk_size }}"
+  delegate_to: "{{ node }}"
+  when:
+    - pve_disk_size is defined
+
+- name: x
+  debug:
+    var: pve_kvm_virtual_created
+
+
+- name: Start VM
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox_api_user }}"
+    api_password: "{{ proxmox_api_password }}"
+    api_host: "{{ proxmox_api_host }}"
+    name: "{{ inventory_hostname }}"
+    node: "{{ node }}"
+    state: started
+  delegate_to: "{{ node }}"
+  when: kvm_start == true
+
+- name: Waiting for server to start up
+  wait_for_connection:
+    timeout: 900
+
+
