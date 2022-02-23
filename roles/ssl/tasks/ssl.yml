@@ -1,0 +1,9 @@
+---
+- debug:
+    var: servers
+
+- include_tasks: letsencrypt.yml
+  when: servers.value.ssl_provider == "letsencrypt"
+
+- include_tasks: selfsign.yml
+  when: servers.value.ssl_provider == "selfsign"
