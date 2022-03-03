@@ -16,7 +16,7 @@
   local_action:
     module: lineinfile
     path: /etc/hosts
-    search_string: "{{ inventory_hostname }}"
+    regexp: "{{ inventory_hostname }}$"
     line: "{{ kvm_ip_address }} {{ inventory_hostname }}"
   when: kvm_ip_address is defined
 

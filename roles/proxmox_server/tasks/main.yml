@@ -3,7 +3,8 @@
   apt:
     name:
       - python3-pip
-      - python
+      - python3
+      
     state: present
 - name: "Install proxmoxer"
   pip:
@@ -11,9 +12,9 @@
 
 - name: "Set KVM Credentials"
   set_fact:
-    proxmox_api_host: "{{proxmox_server[ansible_hostname]['api_host'] }}"
-    proxmox_api_password: "{{proxmox_server[ansible_hostname]['api_password'] }}"
-    proxmox_api_user: "{{proxmox_server[ansible_hostname]['api_user'] }}"
+    proxmox_api_host: "{{proxmox_server[inventory_hostname]['api_host'] }}"
+    proxmox_api_password: "{{proxmox_server[inventory_hostname]['api_password'] }}"
+    proxmox_api_user: "{{proxmox_server[inventory_hostname]['api_user'] }}"
 
 - name: download cloud image
   get_url:
@@ -26,7 +27,7 @@
     api_password: "{{ proxmox_api_password }}"
     api_host: "{{ proxmox_api_host }}"
     vmid: 9002
-    node: "{{ ansible_hostname }}"
+    node: "{{ inventory_hostname }}"
     name: "Debian10"
 
     scsihw: virtio-scsi-pci
@@ -45,7 +46,8 @@
     vga: std
     cpu: host
     template: yes
-    proxmox_default_behavior: compatibility
+    proxmox_default_behavior: no_defaults 
+    
   register: vm_created 
 
 - name: import init disk

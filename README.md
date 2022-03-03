@@ -5,13 +5,13 @@
 ```
 ---
 collections:
-- name: https://github.com/hyphacoop/ansible-proxmox.git
+- name: https://github.com/hyphacoop/ansible-common.git
   type: git
 ```
 install
 
 ```
-ansible-galaxy insatll -r requirements.yml
+ansible-galaxy install -r requirements.yml
 ```
 ## common
 
@@ -76,11 +76,11 @@ all:
   vars:
     add_local_host: true
     pve_kvm_sshkeys: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-      proxmox_server:
-        kvm0:
-          api_host: '192.168.42.190'
-          api_user: 'root@pam'
-          api_password: "password"
+    proxmox_server:
+      kvm0:
+        api_host: '192.168.42.190'
+        api_user: 'root@pam'
+        api_password: "password"
   children:
     kvm:
       hosts:
@@ -98,6 +98,9 @@ all:
           kvm_gw_address: "192.168.42.230"
           kvm_start: true
 ```
+### FAQ
 
+Q: `{"changed": false, "msg": "node 'kvm1' does not exist in cluster"}`
 
+A:  HOSTNAME must match the NODENAME
 
