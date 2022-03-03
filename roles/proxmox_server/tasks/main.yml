@@ -42,7 +42,7 @@
     net:
       net0: 'virtio,bridge=vmbr0'
     ipconfig:
-      ipconfig0: 'ip=192.168.56.230/24'
+      ipconfig0: 'ip=127.0.0.9/32'
     vga: std
     cpu: host
     template: yes

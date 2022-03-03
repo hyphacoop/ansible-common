@@ -8,7 +8,7 @@
 - name: "Set IP Credentials"
   set_fact:
     pve_kvm_ipconfig:
-      ipconfig0: "ip={{ kvm_ip_address }}/24,gw={{ kvm_gw_address }}"
+      ipconfig0: "ip={{ kvm_ip_address }}/{{ kvm_ip_address_cidr | default(24)}},gw={{ kvm_gw_address }}"
   when: kvm_ip_address is defined
 
 - name: "Add local host"
@@ -35,10 +35,10 @@
 
   register: pve_kvm_virtual_created
   delegate_to: "{{ node }}"
-
-
 - name: "Post-clone configuration: update virtual machine resources"
   community.general.proxmox_kvm:
+    net:
+      net0: '{{ kvm_net_0 | default(omit) }}'
     update: "{{ pve_kvm_update | default('yes') }}"
     node: "{{ node }}"
     api_user: "{{ proxmox_api_user }}"
@@ -136,6 +136,7 @@
 
 - name: Waiting for server to start up
   wait_for_connection:
-    timeout: 900
+    sleep: 15
+    timeout: 600
 
 
