@@ -14,6 +14,6 @@
     creates: /etc/ssl/dhparam.pem
 
 - include_tasks: ssl.yml
-  loop: "{{ servers | dict2items  }}"
+  loop: "{{ nginx_sites | dict2items  }}"
   loop_control:
-    loop_var: servers
+    loop_var: nginx_sites

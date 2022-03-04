@@ -6,7 +6,7 @@
       
 - name: Set hostname
   set_fact:
-    web_hostname: "{{ servers.value.web_hostname }}"
+    web_hostname: "{{ nginx_sites.value.web_hostname }}"
 
 - name: Configure certbot to reload nginx on renew
   ini_file:

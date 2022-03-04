@@ -1,9 +1,9 @@
 ---
 - debug:
-    var: servers
+    var: nginx_sites
 
 - include_tasks: letsencrypt.yml
-  when: servers.value.ssl_provider == "letsencrypt"
+  when: nginx_sites.value.ssl_provider == "letsencrypt"
 
 - include_tasks: selfsign.yml
-  when: servers.value.ssl_provider == "selfsign"
+  when: nginx_sites.value.ssl_provider == "selfsign"

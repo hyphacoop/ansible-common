@@ -34,6 +34,7 @@
 
 - name: Install basic utils
   apt:
+    pkg:
       - git
       - build-essential
   when: common_build == true
