@@ -32,6 +32,7 @@
     full: true
     format: qcow2
     newid: "{{ kvm_id }}"
+    proxmox_default_behavior: "no_defaults"
 
   register: pve_kvm_virtual_created
   delegate_to: "{{ node }}"
