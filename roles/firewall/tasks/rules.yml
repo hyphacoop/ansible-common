@@ -1,10 +1,11 @@
 ---
 # IPv6 rules
-- name: Set ip6tables to ACCEPT
+- name: Set ip6tables to DROP
   iptables:
     ip_version: ipv6
-    chain: INPUT
+    chain: "{{ item }}"
     policy: ACCEPT
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
 
 - name: Flush ip6tables
   iptables:
@@ -20,44 +21,17 @@
     protocol: ipv6-icmp
     jump: ACCEPT
 
-- name: ip6tables Allow SSH from ipv6_admin_subs
+- name: ip6tables Allow Ports
   iptables:
     ip_version: ipv6
     chain: INPUT
     protocol: tcp
-    in_interface: eth0
-    source: "{{ item }}"
-    destination_port: "22"
+    destination_port: "{{ item }}"
     jump: ACCEPT
-  with_items: "{{ ipv6_admin_subs }}"
-
-- name: ip6tables Allow nginx TCP 443
-  iptables:
-    ip_version: ipv6
-    chain: INPUT
-    protocol: tcp
-    in_interface: eth0
-    destination_port: "443"
-    jump: ACCEPT
-
-- name: ip6tables Allow nginx TCP 80
-  iptables:
-    ip_version: ipv6
-    chain: INPUT
-    protocol: tcp
-    in_interface: eth0
-    destination_port: "80"
-    jump: ACCEPT
-
-- name: iptables Allow nginx TCP 25
-  iptables:
-    ip_version: ipv6
-    chain: INPUT
-    protocol: tcp
-    in_interface: eth0
-    destination_port: "25"
-    jump: ACCEPT
-
+  with_items: 
+    - 22
+    - 443
+    - 80
 
 - name: ip6tables Allow ESTABLISHED RELATED
   iptables:
@@ -73,11 +47,11 @@
     in_interface: lo
     jump: ACCEPT
 
-- name: Set ip6tables to DROP
+- name: Set last ip6tables to DROP
   iptables:
     ip_version: ipv6
     chain: INPUT
-    policy: DROP
+    jump: DROP
 
 - name: "ip6tables-save"
   shell: ip6tables-save > /etc/iptables/rules.v6
@@ -86,8 +60,9 @@
 - name: Set iptables to ACCEPT
   iptables:
     ip_version: ipv4
-    chain: INPUT
+    chain: "{{ item }}"
     policy: ACCEPT
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
 
 - name: Flush iptables
   iptables:
@@ -103,43 +78,17 @@
     protocol: icmp
     jump: ACCEPT
 
-- name: iptables Allow SSH from ipv4_admin_subs
+- name: iptables Allow ports
   iptables:
     ip_version: ipv4
     chain: INPUT
-    protocol: tcp
-    in_interface: eth0
-    source: "{{ item }}"
-    destination_port: "22"
+    protocol: "{{ item.protocol | default('tcp') }}"
+    destination_port: "{{ item.port }}"
+    source: "{{ item.source | default(omit) }}"
     jump: ACCEPT
-  with_items: "{{ ipv4_admin_subs }}"
+  with_items: "{{ firewall_ports }}"
 
-- name: iptables Allow nginx TCP 443
-  iptables:
-    ip_version: ipv4
-    chain: INPUT
-    protocol: tcp
-    in_interface: eth0
-    destination_port: "443"
-    jump: ACCEPT
 
-- name: iptables Allow nginx TCP 80
-  iptables:
-    ip_version: ipv4
-    chain: INPUT
-    protocol: tcp
-    in_interface: eth0
-    destination_port: "80"
-    jump: ACCEPT
-
-- name: iptables Allow nginx TCP 25
-  iptables:
-    ip_version: ipv4
-    chain: INPUT
-    protocol: tcp
-    in_interface: eth0
-    destination_port: "25"
-    jump: ACCEPT
 
 - name: iptables Allow ESTABLISHED RELATED
   iptables:
@@ -155,12 +104,11 @@
     in_interface: lo
     jump: ACCEPT
 
-
 - name: Set iptables to DROP
   iptables:
     ip_version: ipv4
     chain: INPUT
-    policy: DROP
+    jump: DROP
 
 - name: "iptables-save"
   shell: iptables-save > /etc/iptables/rules.v4

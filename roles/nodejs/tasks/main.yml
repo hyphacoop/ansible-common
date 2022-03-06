@@ -1,0 +1,15 @@
+- name: "Add nodejs apt key"
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
+- name: "Add nodejs 16.x ppa for apt repo"
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_16.x bullseye main
+    update_cache: yes
+- name: "Install nodejs"
+  apt:
+    update_cache: yes
+    name: nodejs
+    state: present
+
