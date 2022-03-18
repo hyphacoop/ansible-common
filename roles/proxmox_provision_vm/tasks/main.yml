@@ -8,7 +8,7 @@
 - name: "Set IP Credentials"
   set_fact:
     pve_kvm_ipconfig:
-      ipconfig0: "ip={{ kvm_ip_address }}/{{ kvm_ip_address_cidr | default(24)}},gw={{ kvm_gw_address }}"
+      ipconfig0: "ip={{ kvm_ip_address }}/{{ kvm_ip_address_cidr | default(24) }},gw={{ kvm_gw_address }}{% if kvm_ip6_address is defined %},ip6={{ kvm_ip6_address }}/{{ kvm_ip6_address_cidr | default(64) }},gw6={{ kvm_gw6_address }}{% endif %}"
   when: kvm_ip_address is defined
 
 - name: "Add local host"
@@ -36,10 +36,10 @@
 
   register: pve_kvm_virtual_created
   delegate_to: "{{ node }}"
+
+
 - name: "Post-clone configuration: update virtual machine resources"
   community.general.proxmox_kvm:
-    net:
-      net0: '{{ kvm_net_0 | default(omit) }}'
     update: "{{ pve_kvm_update | default('yes') }}"
     node: "{{ node }}"
     api_user: "{{ proxmox_api_user }}"
@@ -112,6 +112,20 @@
     watchdog: "{{ pve_kvm_watchdog | default(omit) }}"
   delegate_to: "{{ node }}"
 
+- name: "Post-clone configuration: Update Network Net0"
+  become: true
+  delegate_to: "{{ node }}"
+  command: "qm set {{ kvm_id }} -net0 {{kvm_net_0}}"
+  when: 
+    - kvm_net_0 is defined
+
+- name: "Post-clone configuration: Update Network Net1"
+  become: true
+  delegate_to: "{{ node }}"
+  command: "qm set {{ kvm_id }} -net1 {{kvm_net_1}}"
+  when: 
+    - kvm_net_1 is defined
+
 - name: "Grow up virtual machine disks"
   ansible.builtin.shell: 
     cmd: "sudo qm resize {{ kvm_id }} scsi0 {{ pve_disk_size }}"
@@ -135,9 +149,9 @@
   delegate_to: "{{ node }}"
   when: kvm_start == true
 
-- name: Waiting for server to start up
-  wait_for_connection:
-    sleep: 15
-    timeout: 600
+#- name: Waiting for server to start up
+#  wait_for_connection:
+#    sleep: 15
+#    timeout: 600
 
 

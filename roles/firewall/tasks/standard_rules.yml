@@ -62,14 +62,14 @@
     ip_version: ipv4
     chain: "{{ item }}"
     policy: ACCEPT
-  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT']
 
 - name: Flush iptables
   iptables:
     ip_version: ipv4
     chain: "{{ item }}"
     flush: yes
-  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT']
 
 - name: iptables Allow ICMP
   iptables:
@@ -87,8 +87,6 @@
     source: "{{ item.source | default(omit) }}"
     jump: ACCEPT
   with_items: "{{ firewall_ports }}"
-
-
 
 - name: iptables Allow ESTABLISHED RELATED
   iptables:
@@ -109,6 +107,3 @@
     ip_version: ipv4
     chain: INPUT
     jump: DROP
-
-- name: "iptables-save"
-  shell: iptables-save > /etc/iptables/rules.v4
