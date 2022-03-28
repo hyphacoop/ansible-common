@@ -11,6 +11,13 @@
       ipconfig0: "ip={{ kvm_ip_address }}/{{ kvm_ip_address_cidr | default(24) }},gw={{ kvm_gw_address }}{% if kvm_ip6_address is defined %},ip6={{ kvm_ip6_address }}/{{ kvm_ip6_address_cidr | default(64) }},gw6={{ kvm_gw6_address }}{% endif %}"
   when: kvm_ip_address is defined
 
+- name: "Set IP Credentials 2"
+  set_fact:
+    pve_kvm_ipconfig:
+      ipconfig1: "ip={{ kvm1_ip_address }}/{{ kvm1_ip_address_cidr | default(24) }}{% if kvm1_gw_address is defined %},gw={{ kvm1_gw_address }}{% endif %}{% if kvm1_ip6_address is defined %},ip6={{ kvm1_ip6_address }}/{{ kvm1_ip6_address_cidr | default(64) }}{% if kvm1_gw6_address is defined %},gw6={{ kvm1_gw6_address }}{% endif %}{% endif %}"
+  when: kvm1_ip_address is defined
+
+
 - name: "Add local host"
   become: yes
   local_action:
@@ -137,6 +144,17 @@
   debug:
     var: pve_kvm_virtual_created
 
+- name: "Enable quemu"
+  ansible.builtin.shell: 
+    cmd: "qm set {{ kvm_id }} --agent 1"
+  delegate_to: "{{ node }}"
+  when: kvm_qemu_agent == true
+
+- name: "Disable quemu"
+  ansible.builtin.shell: 
+    cmd: "qm set {{ kvm_id }} --agent 0"
+  delegate_to: "{{ node }}"
+  when: kvm_qemu_agent == false
 
 - name: Start VM
   community.general.proxmox_kvm:
@@ -149,9 +167,30 @@
   delegate_to: "{{ node }}"
   when: kvm_start == true
 
-#- name: Waiting for server to start up
-#  wait_for_connection:
-#    sleep: 15
-#    timeout: 600
+- name: Waiting for server to start up
+  wait_for_connection:
+    sleep: 15
+    timeout: 15
 
+- name: Install qemu-guest-agent
+  apt:
+    name:
+      - qemu-guest-agent
+  when: kvm_qemu_agent == true
+
+
+- name: Enable qemu-guest-agent
+  systemd:
+    name: qemu-guest-agent
+    enabled: yes
+    state: started
+  ignore_errors: yes
+  when: kvm_qemu_agent == true
+
+- name: Disable qemu-guest-agent
+  systemd:
+    name: qemu-guest-agent
+    enabled: no
+    state: stopped
+  when: kvm_qemu_agent == false
 

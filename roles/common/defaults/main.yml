@@ -2,3 +2,4 @@
 common_upgrade: true
 common_basic: true
 common_build: false
+common_predictable_network: true

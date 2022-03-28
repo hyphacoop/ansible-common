@@ -43,3 +43,41 @@
   timezone:
     name: "{{ common_timezone }}"
   when: common_timezone is defined
+
+
+# Disable predictable network interface naming
+- name: Disable Predictable Network Interface Naming
+  ansible.builtin.file:
+    path: /etc/udev/rules.d/80-net-setup-link.rules
+    state: touch
+  when: common_predictable_network == false
+
+- name: Enable Predictable Network Interface Naming
+  ansible.builtin.file:
+    path: /etc/udev/rules.d/80-net-setup-link.rules
+    state: absent
+  when: common_predictable_network == true
+
+- name: Disable Predictable Network Interface Naming
+  lineinfile:
+    state: present
+    dest: /etc/default/grub
+    backrefs: yes
+    regexp: '^(GRUB_CMDLINE_LINUX=(?!.* net.ifnames)\"[^\"]+)(\".*)'
+    line: '\1 net.ifnames=0\2'
+  when: common_predictable_network == false
+  register: grub1
+
+- name: Disable Predictable Network Interface Naming
+  lineinfile:
+    state: present
+    dest: /etc/default/grub
+    backrefs: yes
+    regexp: '^(GRUB_CMDLINE_LINUX=(?!.* biosdevname)\"[^\"]+)(\".*)'
+    line: '\1 biosdevname=0\2'
+  when: common_predictable_network == false
+  register: grub2
+
+- name: initialize vnstat database
+  command: grub-mkconfig -o /boot/grub/grub.cfg
+  when: grub1.changed or grub2.changed
