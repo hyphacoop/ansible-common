@@ -5,28 +5,30 @@
     proxmox_api_password: "{{proxmox_server[node]['api_password'] }}"
     proxmox_api_user: "{{proxmox_server[node]['api_user'] }}"
 
-- name: "Set IP Credentials"
+- name: "Set IP address string for IF1"
   set_fact:
-    pve_kvm_ipconfig:
-      ipconfig0: "ip={{ kvm_ip_address }}/{{ kvm_ip_address_cidr | default(24) }},gw={{ kvm_gw_address }}{% if kvm_ip6_address is defined %},ip6={{ kvm_ip6_address }}/{{ kvm_ip6_address_cidr | default(64) }},gw6={{ kvm_gw6_address }}{% endif %}"
+    ipconfig0: "ip={{ kvm_ip_address }}/{{ kvm_ip_address_cidr | default(24) }},gw={{ kvm_gw_address }}{% if kvm_ip6_address is defined %},ip6={{ kvm_ip6_address }}/{{ kvm_ip6_address_cidr | default(64) }},gw6={{ kvm_gw6_address }}{% endif %}"
   when: kvm_ip_address is defined
 
-- name: "Set IP Credentials 2"
+- name: "Set IP address string for IF2"
   set_fact:
-    pve_kvm_ipconfig:
-      ipconfig1: "ip={{ kvm1_ip_address }}/{{ kvm1_ip_address_cidr | default(24) }}{% if kvm1_gw_address is defined %},gw={{ kvm1_gw_address }}{% endif %}{% if kvm1_ip6_address is defined %},ip6={{ kvm1_ip6_address }}/{{ kvm1_ip6_address_cidr | default(64) }}{% if kvm1_gw6_address is defined %},gw6={{ kvm1_gw6_address }}{% endif %}{% endif %}"
+    ipconfig1: "ip={{ kvm1_ip_address }}/{{ kvm1_ip_address_cidr | default(24) }}{% if kvm1_gw_address is defined %},gw={{ kvm1_gw_address }}{% endif %}{% if kvm1_ip6_address is defined %},ip6={{ kvm1_ip6_address }}/{{ kvm1_ip6_address_cidr | default(64) }}{% if kvm1_gw6_address is defined %},gw6={{ kvm1_gw6_address }}{% endif %}{% endif %}"
   when: kvm1_ip_address is defined
 
+- name: "Prepare IP Address config variable"
+  set_fact:
+    pve_kvm_ipconfig: 
+      ipconfig0: "{{ ipconfig0 | default(omit) }}"
+      ipconfig1: "{{ ipconfig1 | default(omit) }}"
 
 - name: "Add local host"
-  become: yes
+  become: true
   local_action:
     module: lineinfile
     path: /etc/hosts
     regexp: "{{ inventory_hostname }}$"
     line: "{{ kvm_ip_address }} {{ inventory_hostname }}"
   when: kvm_ip_address is defined
-
 
 - name: Create new VM with minimal options
   community.general.proxmox_kvm:
@@ -43,7 +45,6 @@
 
   register: pve_kvm_virtual_created
   delegate_to: "{{ node }}"
-
 
 - name: "Post-clone configuration: update virtual machine resources"
   community.general.proxmox_kvm:
@@ -126,12 +127,22 @@
   when: 
     - kvm_net_0 is defined
 
+- name: "Check to see if net1 interface already created"
+  become: true
+  delegate_to: "{{ node }}"
+  shell: "qm config {{ kvm_id }} | grep net1"
+  register: net1check
+  ignore_errors: true
+  when: 
+    - kvm_net_1 is defined
+
 - name: "Post-clone configuration: Update Network Net1"
   become: true
   delegate_to: "{{ node }}"
   command: "qm set {{ kvm_id }} -net1 {{kvm_net_1}}"
   when: 
     - kvm_net_1 is defined
+    - net1check.stdout_lines[0] is not defined
 
 - name: "Grow up virtual machine disks"
   ansible.builtin.shell: 
@@ -172,6 +183,10 @@
     sleep: 15
     timeout: 15
 
+- name: Write the new ssh instance host key to known hosts
+  connection: local
+  shell: "ssh-keyscan -H {{ inventory_hostname }} >> ~/.ssh/known_hosts"
+
 - name: Install qemu-guest-agent
   apt:
     name:
@@ -184,7 +199,8 @@
     name: qemu-guest-agent
     enabled: yes
     state: started
-  ignore_errors: yes
+    no_block: true
+  ignore_errors: true
   when: kvm_qemu_agent == true
 
 - name: Disable qemu-guest-agent

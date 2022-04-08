@@ -78,6 +78,12 @@
   when: common_predictable_network == false
   register: grub2
 
-- name: initialize vnstat database
+- name: Update grub database
   command: grub-mkconfig -o /boot/grub/grub.cfg
   when: grub1.changed or grub2.changed
+
+- name: Disable TCP Timestamp 
+  ansible.posix.sysctl:
+    name: net.ipv4.tcp_timestamps
+    value: '0'
+    sysctl_set: yes

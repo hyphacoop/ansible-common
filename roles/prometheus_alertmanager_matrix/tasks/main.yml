@@ -1,0 +1,40 @@
+---
+- name: Install git
+  apt:
+    name:
+      - git
+
+- name: Clone matrix-alertmanager
+  git:
+    repo: https://github.com/jaywink/matrix-alertmanager.git
+    dest: /opt/matrix-alertmanager
+    force: true
+
+- name: Run Scripts
+  template:
+    src: run.sh.j2
+    dest: '/opt/matrix-alertmanager/run.sh'
+    mode: '0777'
+
+- name: Install Express
+  npm:
+    path: /opt/matrix-alertmanager
+
+- name: Configure service
+  template:
+    src: matrix-alertmanager.service.j2
+    dest: '/etc/systemd/system/matrix-alertmanager.service'
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+    
+- name: Start Alert manager
+  ansible.builtin.systemd:
+    state: restarted
+    enabled: true
+    name: matrix-alertmanager
+
+
+
+    

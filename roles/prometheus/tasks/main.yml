@@ -1,0 +1,4 @@
+---
+- include_tasks: prometheus.yml
+- include_tasks: prometheus-pve.yml
+- include_tasks: grafana.yml

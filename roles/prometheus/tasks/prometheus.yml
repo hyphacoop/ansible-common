@@ -1,0 +1,74 @@
+---
+- name: Create prometheus group
+  group:
+    name: prometheus    
+
+- name: Create prometheus user
+  user:
+    name: prometheus
+    state: present
+    comment: Prometheus User
+    createhome: yes
+    groups: prometheus
+
+- name: Create prometheus directory
+  file:
+    path: /opt/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+
+- name: Create prometheus directory node config directory
+  file:
+    path: /opt/prometheus/hosts.d/
+    state: directory
+    owner: prometheus
+    group: prometheus
+
+- name: Set Prometheus URL
+  set_fact:
+    prometheus_url: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
+
+- name: Download and unpack
+  unarchive:
+    src: "{{ prometheus_url }}"
+    dest: /opt/prometheus
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Configure service
+  template:
+    src: prometheus.service.j2
+    dest: '/etc/systemd/system/prometheus.service'
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Configure service
+  template:
+    src: prometheus.yml.j2
+    dest: '/opt/prometheus/prometheus.yml'
+    
+- name: Start Prometheus
+  ansible.builtin.systemd:
+    state: started
+    enabled: true
+    name: prometheus
+
+- name: Create alertmanager directory
+  file:
+    path: /opt/prometheus/rules
+    state: directory
+    owner: prometheus
+    group: prometheus
+
+- name: Configure service
+  copy:
+    src: basic_rules.yml
+    dest: '/opt/prometheus/rules/basic_rules.yml'
+
+- name: Configure service
+  copy:
+    src: cAdvisor_rules.yml
+    dest: '/opt/prometheus/rules/cAdvisor_rules.yml'
