@@ -19,6 +19,7 @@ server {
   listen  [::]:80;
   listen  0.0.0.0:80;
 {% endif %}
+
   server_name {{nginx_sites.value.web_hostname}};
 
 {% if nginx_sites.value.ssl_provider is defined %}

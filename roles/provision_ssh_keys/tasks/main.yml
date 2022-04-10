@@ -1,0 +1,29 @@
+---
+- name: Create sysadmin user if it does not exist
+  user:
+    name: sysadmin
+    state: present
+    comment: System Administrator
+    createhome: yes
+    groups: sudo
+    shell: /bin/bash
+
+- name: Update root password
+  user:
+    name: root
+    password: "{{ root_password }}"
+  when: root_password is defined
+
+- name: Update sysadmin password
+  user:
+    name: sysadmin
+    password: "{{ sysadmin_password }}"
+  when: sysadmin_password is defined
+  
+
+- name: Update user keys
+  ansible.posix.authorized_key:
+    user: "sysadmin"
+    state: present
+    key: "{{ item.key }}"
+  with_items: "{{ ssh_user_keys + ssh_additional_user_keys | default([])}}"
