@@ -4,9 +4,9 @@
     "labels": {
         "job": "{{ monitor_job | default('nodeexporter') }}"
     }
-  }{% if bbb_exporter_path is defined %},
+  }{% if bbb_exporter_port is defined %},
   {
-    "targets": ["{{ inventory_hostname }}:9688"],
+    "targets": ["{{ inventory_hostname }}:{{ bbb_exporter_port }}"],
     "labels": {
         "job": "{{ monitor_job | default('nodeexporter') }}"
     }

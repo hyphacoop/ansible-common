@@ -1,23 +1,43 @@
-`Servers:` List of NGINX/SSL to deploy
+# Define NGINX Config
 
-`  "<Domain Name>"` Name of domain names to deploy. This should be the primary DNS to be used. 
+*NOTE* Remember to open port 80 and or 443 on firewall for remote use. 80 required for LetsEncrypt as well
 
-`ssl_provider`: Define only is SSL is required, specify how SSL is to be generated. Valid options are `letsencrypt`,`letsencrypt_stageing`,`selfsign`
+## `nginx_sites: ` 
 
-`web_hostname`: to be deprecated in favour of key (`<Domain Name>`)
+- DICT of NGINX/SSL to deploy. 
+- DICT `KEY` is the cosmetic name of each site
 
-`locations`: List of locations for the site. You can specify many locations however  `/` is required
+Attributes:
+
+- `ssl_provider`: 
+
+  Define only is SSL is required, specify how SSL is to be generated.  Valid options are `letsencrypt`,`letsencrypt_stageing`,`selfsign`
+
+- `web_hostname`: 
+
+  Domain name to use for vhost/ssl certificate
+
+- `web_additional`: Additional SSL domain names to add to certificate. Format: DNS:<domain2>,DNS:<domain3>
 
 
-`web_additional`: Additional SSL domain names to add to certificate. Format: DNS:<domain2>,DNS:<domain3>
-`  "<Location>"` absolute URL path
+- `locations`: 
 
-`local_location`: Path to local folder
+  DICT of locations for the site. You can specify 
+  many locations however `/` is required
 
-`proxy_location`: Reverse Proxy url
+  DICT `KEY` is the absolute URL path
 
+    - `local_location`: Path to local folder
 
-`cors`: set to true to add allow cors headers in NGINX
+    - `proxy_location`: Reverse Proxy URL. Defining enables reverse proxy code
+
+    - `cors`: Set to true to add ALLOW cors headers in NGINX
+    - `proxy_websocket`: Set to true to enable websocket support for reverse proxy
+
+    - `basic_auth_file`: If defined enables basic http authentication using specified files
+
+    - `basic_auth_description`:  (default "Login") Defines text to appear in authentication box
+
   
 Example:
 ```
@@ -26,7 +46,7 @@ all:
     server:
       hosts:
         127.0.0.1:
-          servers:
+          nginx_sites:
             "First.Domain":
               ssl_provider: selfsign
               web_hostname: First.Domain
@@ -36,6 +56,7 @@ all:
                   cors: true
                 "/path2":
                   proxy_location: http://127.0.0.1:8080
+                  proxy_websocket: true
             "Second.Domain":
               ssl_provider: letsencrypt
               web_hostname: Second.Domain

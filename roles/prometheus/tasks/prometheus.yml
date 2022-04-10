@@ -63,12 +63,12 @@
     owner: prometheus
     group: prometheus
 
-- name: Configure service
+- name: Configure basic rules
   copy:
     src: basic_rules.yml
     dest: '/opt/prometheus/rules/basic_rules.yml'
 
-- name: Configure service
+- name: Configure cAdvisor rules
   copy:
     src: cAdvisor_rules.yml
     dest: '/opt/prometheus/rules/cAdvisor_rules.yml'

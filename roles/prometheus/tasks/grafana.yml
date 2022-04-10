@@ -1,9 +1,5 @@
 ---
-- name: Set Prometheus URL
-  set_fact:
-    prometheus_url: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
-
-- name: Add apt Tools
+- name: Add apt tools
   apt:
     pkg:
       - apt-transport-https
@@ -37,6 +33,7 @@
     section: smtp
     option: host
     value: "{{ outbound_email_hostname }}:{{ outbound_email_port }}"
+    when: outbound_email_hostname is defined
 
 - name: Add email support to grafana - username
   community.general.ini_file:
@@ -44,6 +41,7 @@
     section: smtp
     option: username
     value: "{{ outbound_email_login }}"
+    when: outbound_email_hostname is defined
 
 - name: Add email support to grafana - password
   community.general.ini_file:
@@ -51,6 +49,7 @@
     section: smtp
     option: password
     value: "{{ outbound_email_password }}"
+    when: outbound_email_hostname is defined
 
 - name: Add email support to grafana  - fromaddress
   community.general.ini_file:
@@ -58,6 +57,7 @@
     section: smtp
     option: from_address
     value: "{{ outbound_email_address }}"
+    when: outbound_email_hostname is defined
 
 - name: Add email support to grafana - from_name
   community.general.ini_file:
@@ -65,6 +65,7 @@
     section: smtp
     option: from_name
     value: Grafana
+    when: outbound_email_hostname is defined
 
 - name: Start Grafana
   ansible.builtin.systemd:

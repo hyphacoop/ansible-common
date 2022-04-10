@@ -8,7 +8,7 @@
   until: apt_cache is success
   when: common_upgrade == true
 
-- name: Install system required packages
+- name: Install system common packages
   apt:
     pkg:
       - ntp
@@ -22,7 +22,7 @@
       - haveged  
       - wget
 
-- name: Install basic utils
+- name: Install common diagnostic tools
   apt:
     state: present
     pkg:
@@ -32,7 +32,7 @@
       - mailutils
   when: common_basic == true
 
-- name: Install basic utils
+- name: Install common build utils
   apt:
     pkg:
       - git
@@ -46,19 +46,13 @@
 
 
 # Disable predictable network interface naming
-- name: Disable Predictable Network Interface Naming
+- name: Disable predictable network interface naming - Rules
   ansible.builtin.file:
     path: /etc/udev/rules.d/80-net-setup-link.rules
     state: touch
   when: common_predictable_network == false
 
-- name: Enable Predictable Network Interface Naming
-  ansible.builtin.file:
-    path: /etc/udev/rules.d/80-net-setup-link.rules
-    state: absent
-  when: common_predictable_network == true
-
-- name: Disable Predictable Network Interface Naming
+- name: Disable predictable network interface naming - Grub ifnames
   lineinfile:
     state: present
     dest: /etc/default/grub
@@ -68,22 +62,30 @@
   when: common_predictable_network == false
   register: grub1
 
-- name: Disable Predictable Network Interface Naming
+- name: Disable predictable network interface naming - Grub biosdevname
   lineinfile:
     state: present
     dest: /etc/default/grub
     backrefs: yes
     regexp: '^(GRUB_CMDLINE_LINUX=(?!.* biosdevname)\"[^\"]+)(\".*)'
     line: '\1 biosdevname=0\2'
-  when: common_predictable_network == false
+  when: common_disable_predictable_network
   register: grub2
 
-- name: Update grub database
+- name: Enable predictable network interface naming
+  ansible.builtin.file:
+    path: /etc/udev/rules.d/80-net-setup-link.rules
+    state: absent
+  when: common_disable_predictable_network == false
+
+- name: Update grub if changes made
   command: grub-mkconfig -o /boot/grub/grub.cfg
   when: grub1.changed or grub2.changed
 
+# Security
 - name: Disable TCP Timestamp 
   ansible.posix.sysctl:
     name: net.ipv4.tcp_timestamps
     value: '0'
     sysctl_set: yes
+  when: common_tcp_timestamps == true
