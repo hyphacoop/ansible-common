@@ -31,4 +31,3 @@ ansible-galaxy install -r requirements.yml
 - [proxmox_server](roles/proxmox_server/README.md) - setups ProxMox server for provisioning
 - [ssl](roles/ssl/README.md) - Parent to NGINX, provdes ssl certificates
 - [unattended_upgrades](roles/unattended_upgrades/README.md) - Unatteded updates
-
