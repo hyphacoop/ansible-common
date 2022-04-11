@@ -18,6 +18,7 @@
     ctstate: ESTABLISHED,RELATED
     jump: ACCEPT
 
+
 - name: iptables Allow Docker ports
   when: firewall_docker_ports is defined
   ansible.builtin.shell: |
@@ -31,7 +32,7 @@
   with_items: "{{ firewall_docker_ports }}"
 
 - name: ip6tables Allow Docker ports
-  when: firewall_docker_ports is defined
+  when: firewall_docker_ports is defined and firewall_ipv6
   ansible.builtin.shell: |
         ip6tables -A DOCKER-USER \
         -i {{ firewall_docker_interface }} \

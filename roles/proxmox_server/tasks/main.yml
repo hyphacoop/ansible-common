@@ -16,10 +16,7 @@
     proxmox_api_password: "{{proxmox_server[inventory_hostname]['api_password'] }}"
     proxmox_api_user: "{{proxmox_server[inventory_hostname]['api_user'] }}"
 
-- name: Download cloud image Debian10
-  get_url:
-    url: https://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.qcow2
-    dest: /root/debian10.qcow2
+
 
 - name: Create debian VM
   community.general.proxmox_kvm:
@@ -47,8 +44,13 @@
     cpu: host
     template: yes
     proxmox_default_behavior: no_defaults 
-    
   register: vm_created 
+
+- name: Download cloud image Debian10
+  get_url:
+    url: https://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.qcow2
+    dest: /root/debian10.qcow2
+  when: vm_created.changed
 
 - name: import init disk
   ansible.builtin.command:
@@ -69,14 +71,6 @@
     regexp: '^unused0:.*'
     state: absent
   when: vm_created.changed
-
-
-
-
-
-
-
-
 
 - name: Create debian VM
   community.general.proxmox_kvm:

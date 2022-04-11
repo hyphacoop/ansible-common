@@ -3,8 +3,8 @@
 - name: "ip6tables-save"
   shell: ip6tables-save > /etc/iptables/rules.v6
 
-- name: "ip4tables-save"
-  shell: ip4tables-save > /etc/iptables/rules.v4
+- name: "iptables-save"
+  shell: iptables-save > /etc/iptables/rules.v4
 
 
 - name: "Remove docker-specific lines 1/2"

@@ -1,3 +1,4 @@
 firewall_ports:
   - "ssh":
     port: 22
+firewall_ipv6: true

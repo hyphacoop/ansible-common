@@ -6,6 +6,9 @@ Install and configure iptables firewall
 - Default ACCEPT with Last Entry DROP (to prevent lockouts)
 
 ## System Firewall
+
+`firewall_ipv6`: (true) Open port on IPv6.
+
 `firewall_ports`:
 General ipv4 and ipv6 rules for system
 

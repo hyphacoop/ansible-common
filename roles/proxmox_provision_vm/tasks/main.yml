@@ -28,7 +28,7 @@
     path: /etc/hosts
     regexp: "{{ inventory_hostname }}$"
     line: "{{ kvm_ip_address }} {{ inventory_hostname }}"
-  when: kvm_ip_address is defined
+  when: kvm_ip_address is defined and add_local_host
 
 - name: Create new VM with minimal options
   community.general.proxmox_kvm:
@@ -151,10 +151,6 @@
   when:
     - pve_disk_size is defined
 
-- name: x
-  debug:
-    var: pve_kvm_virtual_created
-
 - name: "Enable quemu"
   ansible.builtin.shell: 
     cmd: "qm set {{ kvm_id }} --agent 1"
@@ -185,6 +181,7 @@
 
 - name: Write the new ssh instance host key to known hosts
   connection: local
+  become: false
   shell: "ssh-keyscan -H {{ inventory_hostname }} >> ~/.ssh/known_hosts"
 
 - name: Install qemu-guest-agent

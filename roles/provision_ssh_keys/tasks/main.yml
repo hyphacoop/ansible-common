@@ -11,15 +11,14 @@
 - name: Update root password
   user:
     name: root
-    password: "{{ root_password }}"
+    password: "{{ root_password | password_hash('sha512',password_salt) }}"
   when: root_password is defined
 
 - name: Update sysadmin password
   user:
     name: sysadmin
-    password: "{{ sysadmin_password }}"
+    password: "{{ sysadmin_password | password_hash('sha512',password_salt) }}"
   when: sysadmin_password is defined
-  
 
 - name: Update user keys
   ansible.posix.authorized_key:

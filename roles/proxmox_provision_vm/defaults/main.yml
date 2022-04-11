@@ -1,1 +1,2 @@
 kvm_qemu_agent: false
+add_local_host: false

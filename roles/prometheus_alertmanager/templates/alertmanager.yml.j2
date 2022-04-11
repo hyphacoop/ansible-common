@@ -10,7 +10,7 @@ route:
 receivers:
 - name: 'monitoring-matrix'
   webhook_configs:
-     - url: 'http://localhost:3001/alerts?secret={{ matrix_alertmanager_secret }}'
+     - url: 'http://localhost:3001/alerts?secret={{ matrix_alertmanager_secret }}']
 inhibit_rules:
   - source_match:
       severity: 'critical'

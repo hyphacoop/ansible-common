@@ -50,7 +50,7 @@
   ansible.builtin.file:
     path: /etc/udev/rules.d/80-net-setup-link.rules
     state: touch
-  when: common_predictable_network == false
+  when: common_disable_predictable_network
 
 - name: Disable predictable network interface naming - Grub ifnames
   lineinfile:
@@ -59,7 +59,7 @@
     backrefs: yes
     regexp: '^(GRUB_CMDLINE_LINUX=(?!.* net.ifnames)\"[^\"]+)(\".*)'
     line: '\1 net.ifnames=0\2'
-  when: common_predictable_network == false
+  when: common_disable_predictable_network
   register: grub1
 
 - name: Disable predictable network interface naming - Grub biosdevname

@@ -8,7 +8,7 @@ Generic common tasks to prep server for use
 
 `common_disable_predictable_network`: (false) Disable predictive network interface naming
 
-`common_tcp_timestamps`: (false) Disable TCP timestamps
+`common_tcp_timestamps`: (true) Disable TCP timestamps
 
 `common_timezone`: (undefined) sets time zone IE: `America/Toronto`
 

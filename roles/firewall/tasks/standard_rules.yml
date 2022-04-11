@@ -89,6 +89,7 @@
     source: "{{ item.source | default(omit) }}"
     jump: ACCEPT
   with_items: "{{ firewall_ports }}"
+  when: firewall_ipv6
 
 - name: Set iptables to DROP
   iptables:
