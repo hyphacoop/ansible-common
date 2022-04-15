@@ -1,0 +1,9 @@
+---
+- debug:
+    var: nginx_sites
+
+- include_tasks: letsencrypt.yml
+  when: nginx_sites.value.ssl_provider == "letsencrypt"
+
+- include_tasks: selfsign.yml
+  when: nginx_sites.value.ssl_provider == "selfsign"

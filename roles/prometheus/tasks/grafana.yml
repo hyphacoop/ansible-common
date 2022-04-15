@@ -1,0 +1,74 @@
+---
+- name: Add apt tools
+  apt:
+    pkg:
+      - apt-transport-https
+      - software-properties-common
+
+- name: Add an Apt grafan GPG key
+  ansible.builtin.apt_key:
+    url: https://packages.grafana.com/gpg.key
+    state: present
+
+- apt_repository:
+    repo: deb https://packages.grafana.com/oss/deb stable main
+    state: present
+
+- name: Install Grafana
+  apt:
+    pkg:
+      - grafana
+    update_cache: yes
+
+- name: Add email support to grafana
+  community.general.ini_file:
+    path: /etc/grafana/grafana.ini
+    section: smtp
+    option: enabled
+    value: "true"
+
+- name: Add email support to grafana - host
+  community.general.ini_file:
+    path: /etc/grafana/grafana.ini
+    section: smtp
+    option: host
+    value: "{{ outbound_email_hostname }}:{{ outbound_email_port }}"
+  when: outbound_email_hostname is defined
+
+- name: Add email support to grafana - username
+  community.general.ini_file:
+    path: /etc/grafana/grafana.ini
+    section: smtp
+    option: username
+    value: "{{ outbound_email_login }}"
+  when: outbound_email_hostname is defined
+
+- name: Add email support to grafana - password
+  community.general.ini_file:
+    path: /etc/grafana/grafana.ini
+    section: smtp
+    option: password
+    value: "{{ outbound_email_password }}"
+  when: outbound_email_hostname is defined
+
+- name: Add email support to grafana  - fromaddress
+  community.general.ini_file:
+    path: /etc/grafana/grafana.ini
+    section: smtp
+    option: from_address
+    value: "{{ outbound_email_address }}"
+  when: outbound_email_hostname is defined
+
+- name: Add email support to grafana - from_name
+  community.general.ini_file:
+    path: /etc/grafana/grafana.ini
+    section: smtp
+    option: from_name
+    value: Grafana
+  when: outbound_email_hostname is defined
+
+- name: Start Grafana
+  ansible.builtin.systemd:
+    state: started
+    enabled: true
+    name: grafana-server

@@ -1,0 +1,32 @@
+---
+
+- name: "ip6tables-save"
+  shell: ip6tables-save > /etc/iptables/rules.v6
+
+- name: "iptables-save"
+  shell: iptables-save > /etc/iptables/rules.v4
+
+
+- name: "Remove docker-specific lines 1/2"
+  lineinfile:
+    path: /etc/iptables/rules.v4
+    regexp: "DOCKER-ISOLATION"
+    state: absent
+
+- name: "Remove docker-specific lines 2/2"
+  lineinfile:
+    path: /etc/iptables/rules.v4
+    regexp: "-A DOCKER "
+    state: absent
+
+- name: "Remove docker-specific lines 1/2"
+  lineinfile:
+    path: /etc/iptables/rules.v6
+    regexp: "DOCKER-ISOLATION"
+    state: absent
+
+- name: "Remove docker-specific lines 2/2"
+  lineinfile:
+    path: /etc/iptables/rules.v6
+    regexp: "-A DOCKER "
+    state: absent

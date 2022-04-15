@@ -1,0 +1,22 @@
+[
+  {
+    "targets": ["{{ inventory_hostname }}:9100"],
+    "labels": {
+        "job": "{{ monitor_job | default('nodeexporter') }}"
+    }
+  }{% if bbb_exporter_port is defined %},
+  {
+    "targets": ["{{ inventory_hostname }}:{{ bbb_exporter_port }}"],
+    "labels": {
+        "job": "{{ monitor_job | default('nodeexporter') }}"
+    }
+  }{% endif %}
+{% if cadvisor_exporter_port is defined %},
+  {
+    "targets": ["{{ inventory_hostname }}:{{ cadvisor_exporter_port }}"],
+    "labels": {
+        "job": "{{ monitor_job | default('nodeexporter') }}"
+    }
+  }
+{% endif %}
+]

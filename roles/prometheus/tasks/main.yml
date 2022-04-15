@@ -1,0 +1,6 @@
+---
+- include_tasks: prometheus.yml
+- include_tasks: prometheus-pve.yml
+  when: prometheus_pve_install == true
+- include_tasks: grafana.yml
+  when: grafana_install == true

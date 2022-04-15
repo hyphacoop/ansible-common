@@ -1,0 +1,59 @@
+- name: Flush iptables
+  iptables:
+    ip_version: ipv4
+    chain: "DOCKER-USER"
+    flush: yes
+
+- name: iptables Allow Docker ESTABLISHED RELATED
+  iptables:
+    ip_version: ipv4
+    chain: DOCKER-USER
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+
+- name: ip6tables Allow Docker ESTABLISHED RELATED
+  iptables:
+    ip_version: ipv6
+    chain: DOCKER-USER
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+
+
+- name: iptables Allow Docker ports
+  when: firewall_docker_ports is defined
+  ansible.builtin.shell: |
+        iptables -A DOCKER-USER \
+        -i {{ firewall_docker_interface }} \
+        -p {{ item.protocol | default('tcp') }} \
+        {% if item.source is defined %}-s {{ item.source }} {% endif %} \
+        -m conntrack \
+        --ctorigdstport {{ item.port }} --ctdir ORIGINAL \        
+        -j RETURN        
+  with_items: "{{ firewall_docker_ports }}"
+
+- name: ip6tables Allow Docker ports
+  when: firewall_docker_ports is defined and firewall_ipv6
+  ansible.builtin.shell: |
+        ip6tables -A DOCKER-USER \
+        -i {{ firewall_docker_interface }} \
+        -p {{ item.protocol | default('tcp') }} \
+        {% if item.source is defined %}-s {{ item.source }} {% endif %} \
+        -m conntrack \
+        --ctorigdstport {{ item.port }} --ctdir ORIGINAL \        
+        -j RETURN        
+  with_items: "{{ firewall_docker_ports }}"
+
+- name: Set iptables Docker to DROP
+  when: firewall_docker_ports is defined
+  iptables:
+    ip_version: ipv4
+    chain: DOCKER-USER
+    in_interface: "{{ firewall_docker_interface }}"
+    jump: DROP
+
+- name: Set last ip6tables to DROP
+  iptables:
+    ip_version: ipv6
+    in_interface: "{{ firewall_docker_interface }}"
+    chain: DOCKER-USER
+    jump: DROP

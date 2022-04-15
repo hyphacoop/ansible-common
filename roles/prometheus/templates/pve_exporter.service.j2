@@ -1,0 +1,14 @@
+[Unit]
+Description=Prometheus KVM Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus 
+Group=prometheus
+WorkingDirectory=/opt/prometheus
+Type=simple
+ExecStart=/usr/local/bin/pve_exporter /opt/prometheus/pve_conf.yml 9221 127.0.0.1
+
+[Install]
+WantedBy=multi-user.target

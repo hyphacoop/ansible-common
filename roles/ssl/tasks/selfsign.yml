@@ -1,0 +1,36 @@
+---
+- name: test
+  debug:
+    var:  nginx_sites.value.web_additional
+    
+- name: Set hostname
+  set_fact:
+    web_hostname: "{{ nginx_sites.value.web_hostname }}"
+
+- name: Install SSL packages
+  apt:
+    pkg:
+      - python3-openssl
+
+- name: Creates directory
+  file:
+    path: /etc/letsencrypt/live/{{ web_hostname }}
+    state: directory
+
+- name: Generate an OpenSSL private key.
+  openssl_privatekey:
+    path: /etc/letsencrypt/live/{{ web_hostname }}/privkey.pem
+
+- name: Generate an OpenSSL CSR.
+  openssl_csr:
+    path: /etc/letsencrypt/live/{{ web_hostname }}/request.csr
+    privatekey_path: /etc/letsencrypt/live/{{ web_hostname }}/privkey.pem
+    common_name: "{{ web_hostname }}"
+    subject_alt_name: "{{ nginx_sites.value.web_additional | default(omit) }}"
+
+- name: Self Sign Cert
+  openssl_certificate:
+    path: /etc/letsencrypt/live/{{ web_hostname }}/fullchain.pem
+    privatekey_path: /etc/letsencrypt/live/{{ web_hostname }}/privkey.pem
+    csr_path: /etc/letsencrypt/live/{{ web_hostname }}/request.csr
+    provider: selfsigned

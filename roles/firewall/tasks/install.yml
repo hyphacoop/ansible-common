@@ -6,4 +6,5 @@
 - name: Install system required packages
   apt:
     pkg:
+      - iptables
       - iptables-persistent

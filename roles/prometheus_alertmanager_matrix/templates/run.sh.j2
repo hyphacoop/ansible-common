@@ -1,0 +1,8 @@
+#!/bin/sh
+export APP_PORT=3001 \
+APP_ALERTMANAGER_SECRET="{{ matrix_alertmanager_secret }}" \
+MATRIX_HOMESERVER_URL="{{ matrix_homeserver_url }}" \
+MATRIX_ROOMS="monitoring-matrix/{{ matrix_room }}" \
+MATRIX_TOKEN="{{ matrix_user_token }}" \
+MATRIX_USER="{{ matrix_username }}"
+node src/app.js

@@ -1,0 +1,6 @@
+---
+- name: Add Node Config to Prometheus
+  template: 
+    src: host.j2
+    dest: /opt/prometheus/hosts.d/{{ inventory_hostname }}.json
+  delegate_to: "{{ monitor_server }}"

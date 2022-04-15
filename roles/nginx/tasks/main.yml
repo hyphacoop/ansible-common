@@ -1,0 +1,10 @@
+---
+- name: Install nginx packages
+  apt:
+    pkg:
+      - nginx
+
+- include_tasks: nginx.yml
+  loop: "{{ nginx_sites | dict2items  }}"
+  loop_control:
+    loop_var: nginx_sites

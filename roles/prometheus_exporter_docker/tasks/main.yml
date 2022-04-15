@@ -1,0 +1,22 @@
+---
+- name: Create cAdvisor directory
+  file:
+    path: /root/cAdvisor
+    state: directory
+    owner: root
+    group: root
+
+- name: Install daemon.json
+  copy:
+    src: docker-compose.yml
+    dest: /root/cAdvisor/docker-compose.yml
+    group: root
+    owner: root
+    mode: 0555
+
+- name: docker-compose build
+  command: docker-compose up -d
+  args:
+      chdir: /root/cAdvisor
+
+    

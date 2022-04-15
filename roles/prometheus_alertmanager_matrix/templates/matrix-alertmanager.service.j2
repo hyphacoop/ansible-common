@@ -1,0 +1,14 @@
+[Unit]
+Description=Prometheus matrix-alertmanager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+WorkingDirectory=/opt/matrix-alertmanager
+Type=simple
+ExecStart=/opt/matrix-alertmanager/run.sh
+
+[Install]
+WantedBy=multi-user.target

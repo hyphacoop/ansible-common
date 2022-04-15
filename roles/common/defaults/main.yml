@@ -2,3 +2,5 @@
 common_upgrade: true
 common_basic: true
 common_build: false
+common_disable_predictable_network: false
+common_tcp_timestamps: true

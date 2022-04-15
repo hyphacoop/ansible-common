@@ -1,6 +1,6 @@
 ---
 - name: Disable root login via SSH
-  become: yes
+  become: true
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "^#?PermitRootLogin.*"
@@ -18,7 +18,6 @@
   register: ssh_harden_ssh
   
 - name: Restart SSH
-
   service:
       name: ssh
       state: restarted

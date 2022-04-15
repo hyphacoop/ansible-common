@@ -1,0 +1,31 @@
+---
+- name: "Install python"
+  apt:
+    name:
+      - python3-pip
+      - python3
+    state: present
+- name: "Install prometheus-pve-exporter"
+  pip:
+    name: 
+      - prometheus-pve-exporter
+
+- name: Create prometheus directory node config directory
+  file:
+    path: /opt/prometheus/hosts.pve.d/
+    state: directory
+    owner: prometheus
+    group: prometheus
+
+
+- name: Config File
+  template:
+    src: pve_conf.yml.j2
+    dest: /opt/prometheus/pve_conf.yml
+  when: pve_root_password is defined
+
+- name: PVE Service
+  template:
+    src: pve_exporter.service.j2
+    dest: /etc/systemd/system/pve_exporter.service
+  when: pve_root_password is defined
