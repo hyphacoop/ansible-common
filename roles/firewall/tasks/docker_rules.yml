@@ -1,3 +1,11 @@
+- name: Create the DOCKER-USER chain
+  shell: iptables --new-chain DOCKER-USER
+  ignore_errors: true
+- name: Create the DOCKER-USER chain
+  shell: ip6tables --new-chain DOCKER-USER
+  ignore_errors: true
+
+
 - name: Flush iptables
   iptables:
     ip_version: ipv4
