@@ -28,6 +28,22 @@
     flush: yes
   with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
 
+- name: Flush nat iptables
+  iptables:
+    ip_version: ipv4
+    chain: "{{ item }}"
+    table: nat
+    flush: yes
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT']
+
+- name: Flush nat ip6tables
+  iptables:
+    ip_version: ipv6
+    chain: "{{ item }}"
+    flush: yes
+    table: nat
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
+
 - name: ip6tables Allow ICMP
   iptables:
     ip_version: ipv6
