@@ -34,7 +34,8 @@
     chain: "{{ item }}"
     table: nat
     flush: yes
-  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT']
+  ignore_errors: true
+  with_items:  [ 'PREROUTING', 'PREROUTING', 'DOCKER' , 'INPUT' , 'OUTPUT']
 
 - name: Flush nat ip6tables
   iptables:
@@ -42,7 +43,8 @@
     chain: "{{ item }}"
     flush: yes
     table: nat
-  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
+  ignore_errors: true
+  with_items:  [ 'PREROUTING', 'PREROUTING', 'DOCKER' , 'INPUT' , 'OUTPUT']
 
 - name: ip6tables Allow ICMP
   iptables:
