@@ -1,0 +1,67 @@
+---
+- name: "Install python"
+  apt:
+    name:
+      - python3-pip
+      - python3
+    state: present
+
+- name: "Install passlib"
+  pip:
+    name: 
+      - passlib
+
+- name: Create prometheus group
+  group:
+    name: prometheus    
+
+- name: Create prometheus user
+  user:
+    name: prometheus
+    state: present
+    comment: Prometheus User
+    createhome: yes
+    groups: prometheus
+    shell: /bin/bash
+
+- name: Create loki directory
+  file:
+    path: /opt/loki
+    state: directory
+    owner: prometheus
+    group: prometheus
+
+- name: Set loki URL
+  set_fact:
+    loki_url: https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.zip    
+
+- name: Download and unpack
+  unarchive:
+    src: "{{ loki_url }}"
+    dest: /opt/loki
+    remote_src: yes
+
+- name: Update Template
+  template:
+    src: loki.yml
+    dest: /opt/loki/loki-config.yml
+
+- name: Service Template
+  template:
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
+
+- name: Loki Service Start
+  ansible.builtin.systemd:
+    state: started
+    enabled: true
+    name: loki
+
+- name: Add a user to a password file and ensure permissions are set
+  community.general.htpasswd:
+    path: /opt/loki/htpasswd
+    name: loki
+    password: "{{ secret_loki_password }}"
+    owner: www-data
+    group: www-data
+    mode: 0640
