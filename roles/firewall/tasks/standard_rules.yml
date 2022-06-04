@@ -104,7 +104,7 @@
     chain: INPUT
     protocol: "{{ item.protocol | default('tcp') }}"
     destination_port: "{{ item.port }}"
-    source: "{{ item.sourceIPv6 if defined item.sourceIPv6 else item.source  | default(omit) }}"
+    source: "{{ item.sourceIPv6  | default(omit) }}"
     jump: ACCEPT
   with_items: "{{ firewall_ports }}"
   when: firewall_ipv6
