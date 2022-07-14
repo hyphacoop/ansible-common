@@ -1,0 +1,5 @@
+---
+- include_tasks: provision_disk.yml
+  loop: "{{ provision_disk | dict2items  }}"
+  loop_control:
+    loop_var: provision_disk
