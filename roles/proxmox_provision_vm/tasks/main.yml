@@ -148,9 +148,27 @@
   ansible.builtin.shell: 
     cmd: "sudo qm resize {{ kvm_id }} scsi0 {{ pve_disk_size }}"
   delegate_to: "{{ node }}"
+  ignore_errors: true
   when:
     - pve_disk_size is defined
 
+- name: "Check to see if scsi1 disk already created"
+  become: true
+  delegate_to: "{{ node }}"
+  shell: "qm config {{ kvm_id }} | grep scsi1"
+  register: scsi1check
+  ignore_errors: true
+  when: 
+    - kvm_disk_scsi1 is defined
+
+- name: "Create scsi1 disk"
+  become: true
+  delegate_to: "{{ node }}"
+  command: "qm set {{ kvm_id }} --scsi1 {{kvm_disk_scsi1}}"
+  when: 
+    - kvm_disk_scsi1 is defined
+    - scsi1check.stdout_lines[0] is not defined
+  
 - name: "Enable quemu"
   ansible.builtin.shell: 
     cmd: "qm set {{ kvm_id }} --agent 1"
@@ -206,4 +224,5 @@
     enabled: no
     state: stopped
   when: kvm_qemu_agent == false
+  ignore_errors: true
 

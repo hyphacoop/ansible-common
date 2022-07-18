@@ -28,6 +28,24 @@
     flush: yes
   with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
 
+- name: Flush nat iptables
+  iptables:
+    ip_version: ipv4
+    chain: "{{ item }}"
+    table: nat
+    flush: yes
+  ignore_errors: true
+  with_items:  [ 'PREROUTING', 'PREROUTING', 'DOCKER' , 'INPUT' , 'OUTPUT']
+
+- name: Flush nat ip6tables
+  iptables:
+    ip_version: ipv6
+    chain: "{{ item }}"
+    flush: yes
+    table: nat
+  ignore_errors: true
+  with_items:  [ 'PREROUTING', 'PREROUTING', 'DOCKER' , 'INPUT' , 'OUTPUT']
+
 - name: ip6tables Allow ICMP
   iptables:
     ip_version: ipv6
@@ -86,7 +104,7 @@
     chain: INPUT
     protocol: "{{ item.protocol | default('tcp') }}"
     destination_port: "{{ item.port }}"
-    source: "{{ item.source | default(omit) }}"
+    source: "{{ item.sourceIPv6  | default(omit) }}"
     jump: ACCEPT
   with_items: "{{ firewall_ports }}"
   when: firewall_ipv6

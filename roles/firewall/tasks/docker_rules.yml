@@ -1,3 +1,11 @@
+- name: Create the DOCKER-USER chain
+  shell: iptables --new-chain DOCKER-USER
+  ignore_errors: true
+- name: Create the DOCKER-USER chain
+  shell: ip6tables --new-chain DOCKER-USER
+  ignore_errors: true
+
+
 - name: Flush iptables
   iptables:
     ip_version: ipv4
@@ -57,3 +65,17 @@
     in_interface: "{{ firewall_docker_interface }}"
     chain: DOCKER-USER
     jump: DROP
+
+- name:  Add DOCKER-USER rule to 'FORWARD' ipv4
+  when: firewall_docker_ports is defined
+  ansible.builtin.iptables:
+    chain: FORWARD
+    ip_version: ipv4
+    jump: DOCKER-USER
+
+- name:  Add DOCKER-USER rule to 'FORWARD' ipv6
+  when: firewall_docker_ports is defined and firewall_ipv6
+  ansible.builtin.iptables:
+    chain: FORWARD
+    ip_version: ipv6
+    jump: DOCKER-USER

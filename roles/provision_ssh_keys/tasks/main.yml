@@ -11,13 +11,13 @@
 - name: Update root password
   user:
     name: root
-    password: "{{ root_password | password_hash('sha512',password_salt) }}"
+    password: "{{ root_password | password_hash('sha512') }}"
   when: root_password is defined
 
 - name: Update sysadmin password
   user:
     name: sysadmin
-    password: "{{ sysadmin_password | password_hash('sha512',password_salt) }}"
+    password: "{{ sysadmin_password | password_hash('sha512')}}"
   when: sysadmin_password is defined
 
 - name: Update user keys

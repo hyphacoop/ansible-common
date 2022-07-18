@@ -1,3 +1,8 @@
+- name: "Install GPG"
+  apt:
+    pkg:
+      gnupg
+
 - name: "Add nodejs apt key"
   apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
