@@ -1,4 +1,10 @@
 # provision_ssh_keys
 
-Adds sysadmin user and provisionins keys in variables `ssh_user_keys` and `ssh_additional_user_keys`
-also sets `root_password` and `sysadmin_password` if defined (already hashed)
+Adds sysadmin user, sets root and sysadmin passwords, adds SSH keys to sysadmin.
+
+- `root_password`: (undefined) set root password (SHA-512 password hash)
+- `sysadmin_password`: (undefined) set sysadmin password (SHA-512 password hash)
+- `ssh_user_keys`: (undefined) array of user SSH keys (TODO: array?)
+- `ssh_additional_user_keys`: (undefined) same as above
+
+TODO: example of SSH keys
