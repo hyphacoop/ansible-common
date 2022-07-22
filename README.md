@@ -1,21 +1,29 @@
 # Ansible - Hypha
 
 
-`requirements.yml`
-```
+## Add to your Ansible repo
+
+Add to `requirements.yml`:
+```yaml
 ---
 collections:
 - name: https://github.com/hyphacoop/ansible-common.git
   type: git
 ```
-install
+
+Install with:
 
 ```
 ansible-galaxy install -r requirements.yml
 ```
+
+## Using
+
+Our `setup` role conflicts with Ansible's built-in one. In general modules should be specified by their full path, like `hypha.common.setup` and `ansible.builtin.setup`.
+
 # Roles 
 
-- [hypha.common.setup](roles/setup/README.md) - setup server for use
+- [setup](roles/setup/README.md) - setup server for use
 - [firewall](roles/firewall/README.md) - setup system and docker firewall
 - [gather_facts](roles/gather_facts/README.md) - gathers facts if playbook started skipping facts
 - [harden_ssh](roles/harden_ssh/README.md) - locks out root login, and disables password logins on SSH
