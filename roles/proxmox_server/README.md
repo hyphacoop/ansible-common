@@ -1,12 +1,10 @@
-## proxmox_server
+# proxmox_server
 
-Prepeare proxmox server for ansible deploments
+Prepare proxmox server for ansible deployments
 
+## Define KVM Nodes Example
 
-
-### Define KVM Nodes Example
-
-```
+```yaml
 ---
 proxmox_server:
   kvm0:
@@ -23,9 +21,9 @@ proxmox_server:
     api_password: "password5"
 ```
 
-### Sample inventory
+## Sample inventory
 
-```
+```yaml
 all:
   vars:
     add_local_host: true
@@ -52,7 +50,7 @@ all:
           kvm_gw_address: "192.168.42.230"
           kvm_start: true
 ```
-### FAQ
+## FAQ
 
 Q: `{"changed": false, "msg": "node 'kvm1' does not exist in cluster"}`
 

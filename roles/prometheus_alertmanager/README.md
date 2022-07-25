@@ -1,5 +1,7 @@
-# Alert Manager
+# prometheus_alertmanager
 
-- alertmanager_version: (0.23.0)
-- prometheus_url:
-- matrix_alertmanager_secret: 
+Installs [Alertmanager](https://github.com/prometheus/alertmanager).
+
+- `alertmanager_version`: (0.23.0)
+- `matrix_alertmanager_secret`:
+ 

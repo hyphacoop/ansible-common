@@ -5,7 +5,7 @@
       - apt-transport-https
       - software-properties-common
 
-- name: Add an Apt grafan GPG key
+- name: Add grafana apt repo GPG key
   ansible.builtin.apt_key:
     url: https://packages.grafana.com/gpg.key
     state: present
@@ -51,7 +51,7 @@
     value: "{{ outbound_email_password }}"
   when: outbound_email_hostname is defined
 
-- name: Add email support to grafana  - fromaddress
+- name: Add email support to grafana - fromaddress
   community.general.ini_file:
     path: /etc/grafana/grafana.ini
     section: smtp
