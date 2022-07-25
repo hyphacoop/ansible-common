@@ -7,11 +7,19 @@
     mode: 0755
     state: directory
 
-- name: Generate 4096 bit DH parameters (this may take a long time...)
-  shell: openssl dhparam -writerand - 4096 > /etc/ssl/dhparam.pem
-  args:
-    chdir: /etc/nginx/ssl
-    creates: /etc/ssl/dhparam.pem
+- name: Download 2048-bit DH params
+  ansible.builtin.get_url:
+    url: https://ssl-config.mozilla.org/ffdhe2048.txt
+    dest: /etc/ssl/dhparam.pem
+    mode: 0644
+  when: not dh_param_4096
+
+- name: Download 4096-bit DH params
+  ansible.builtin.get_url:
+    url: https://ssl-config.mozilla.org/ffdhe4096.txt
+    dest: /etc/ssl/dhparam.pem
+    mode: 0644
+  when: dh_param_4096
 
 - include_tasks: ssl.yml
   when: nginx_sites.value.ssl_provider is defined
