@@ -2,11 +2,11 @@
 
 Should apply `proxmox_server` to KVM to install promoxer
 
--` proxmox_server`: Dict of proxmox servers and credentials
-    -` key`: Hostname of proxmox server
-        -` api_host`: address of server
-        -` api_user`: username to login as
-        -` api_password`: password to login as
+- `proxmox_server`: Dict of proxmox servers and credentials
+    - `key`: Hostname of proxmox server
+        - `api_host`: address of server
+        - `api_user`: username to login as
+        - `api_password`: password to login as
 
 -` add_local_host`: adds host name and ip pair to local /etc/hosts
 -` pve_kvm_sshkeys`: defines SSH keys to be installed on KVM host
