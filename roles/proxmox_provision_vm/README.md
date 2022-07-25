@@ -1,6 +1,6 @@
 # proxmox_provision_vm
 
-Should apply` proxmox_server` to KVM to install promoxer
+Should apply `proxmox_server` to KVM to install promoxer
 
 -` proxmox_server`: Dict of proxmox servers and credentials
     -` key`: Hostname of proxmox server
