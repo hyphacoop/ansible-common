@@ -4,7 +4,7 @@ Adds sysadmin user, sets root and sysadmin passwords, adds SSH keys to sysadmin.
 
 - `root_password`: (undefined) set root password (SHA-512 password hash)
 - `sysadmin_password`: (undefined) set sysadmin password (SHA-512 password hash)
-- `ssh_user_keys`: (undefined) dic of user SSH keys
+- `ssh_user_keys`: (undefined) dict of user SSH keys
     - `name`: cosmetic name of user
     - `key`: Key to be added
 - `ssh_additional_user_keys`: (undefined) additional keys that will be added to `ssh_user_keys`
