@@ -1,46 +1,37 @@
-# Define NGINX Config
+# nginx
 
-*NOTE* Remember to open port 80 and or 443 on firewall for remote use. 80 required for LetsEncrypt as well
+Install nginx and set up websites with reverse-proxies.
 
-## `nginx_sites: ` 
+*NOTE* Remember to open port 80 and or 443 on firewall for remote use.
+80 required for LetsEncrypt as well.
 
-- DICT of NGINX/SSL to deploy. 
-- DICT `KEY` is the cosmetic name of each site
+## `nginx_sites:` 
+
+- Dictionary of websites to deploy. 
+- Dict key is the cosmetic name of each site
 
 Attributes:
 
-- `ssl_provider`: 
-
-  Define only is SSL is required, specify how SSL is to be generated.  Valid options are `letsencrypt`,`letsencrypt_stageing`,`selfsign`
-
-- `web_hostname`: 
-
-  Domain name to use for vhost/ssl certificate
-
+- `ssl_provider`: Define only is SSL is required, specify how SSL is to be generated.  Valid options are `letsencrypt`,`letsencrypt_stageing`,`selfsign`
+- `web_hostname`: Domain name to use for vhost/ssl certificate
 - `web_additional`: Additional SSL domain names to add to certificate. Format: DNS:<domain2>,DNS:<domain3>
-
-
 - `locations`: 
 
-  DICT of locations for the site. You can specify 
-  many locations however `/` is required
+  Dictionary of locations for the site. You can specify 
+  many locations, however `/` is required
 
-  DICT `KEY` is the absolute URL path
+  Dict key is the absolute URL path
 
     - `local_location`: Path to local folder
-
-    - `proxy_location`: Reverse Proxy URL. Defining enables reverse proxy code
-
-    - `cors`: Set to true to add ALLOW cors headers in NGINX
-    - `proxy_websocket`: Set to true to enable websocket support for reverse proxy
-
+    - `proxy_location`: Reverse-proxy URL. Defining enables reverse-proxying
+    - `cors`: Set to true to add add CORS headers in nginx
+    - `proxy_websocket`: Set to true to enable websocket support for reverse-proxy
     - `basic_auth_file`: If defined enables basic http authentication using specified files
-
     - `basic_auth_description`:  (default "Login") Defines text to appear in authentication box
 
   
 Example:
-```
+```yaml
 all:
   children:
     server:
