@@ -8,7 +8,7 @@
 - name: "Install prometheus-pve-exporter"
   pip:
     name: 
-      - prometheus-pve-exporter
+      - prometheus-pve-exporter>=2.2.3,<2.3.0
 
 - name: Create prometheus directory node config directory
   file:
