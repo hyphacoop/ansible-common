@@ -28,6 +28,7 @@ Our `setup` role conflicts with Ansible's built-in one. In general modules shoul
 - [gather_facts](roles/gather_facts/README.md) - gathers facts if playbook started skipping facts
 - [harden_ssh](roles/harden_ssh/README.md) - locks out root login, and disables password logins on SSH
 - [loki](roles/loki/README.md) - install loki
+- [mkswap](roles/mkswap/README.md) - create a swap file
 - [nginx](roles/nginx/README.md) - install nginx and set up reverse-proxies
 - [node_exporter](roles/node_exporter/README.md) - install node_exporter
 - [nodejs](roles/nodejs/README.md) - install nodejs
@@ -41,5 +42,6 @@ Our `setup` role conflicts with Ansible's built-in one. In general modules shoul
 - [provision_ssh_keys](roles/provision_ssh_keys/README.md) - setup sysadmin user, set passwords, add SSH keys
 - [proxmox_provision_vm](roles/proxmox_provision_vm/README.md) - provision VM on ProxMox
 - [proxmox_server](roles/proxmox_server/README.md) - setup ProxMox server for provisioning
+- - [reboot](roles/reboot/README.md) - reboots the machine
 - [ssl](roles/ssl/README.md) - parent to nginx, provdes ssl certificates
 - [unattended_upgrades](roles/unattended_upgrades/README.md) - setup unattended upgrades
