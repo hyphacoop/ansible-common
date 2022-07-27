@@ -94,6 +94,7 @@ server {
 {% endif %}
 {% if location.cors | default (false) == True %}
     add_header Access-Control-Allow-Origin *;
+    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range' always;
 {% endif %}
     client_max_body_size       8192M;
 {% if location.proxy_websocket | default (false) == True %}
