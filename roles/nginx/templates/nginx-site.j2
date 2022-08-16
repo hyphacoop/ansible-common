@@ -1,5 +1,5 @@
 {% if ( (nginx_sites.value.ssl_redirect is not defined or nginx_sites.value.ssl_redirect == true)
-        and nginx_sites.value.ssl_provider is defined ) %}
+        and nginx_sites.value.ssl_provider | default(true) ) %}
 server {
   listen 80;
   listen [::]:80;
@@ -12,7 +12,7 @@ server {
 
 server {
 
-{% if nginx_sites.value.ssl_provider is defined %}
+{% if nginx_sites.value.ssl_provider | default(true) %}
   listen 0.0.0.0:443 ssl http2;
   listen [::]:443 ssl http2;
 {% else %}
@@ -22,7 +22,7 @@ server {
 
   server_name {{nginx_sites.value.web_hostname}};
 
-{% if nginx_sites.value.ssl_provider is defined %}
+{% if nginx_sites.value.ssl_provider | default(true) %}
   
   ##########
   # Source for SSL configuration:
@@ -87,7 +87,7 @@ server {
     proxy_read_timeout 1200;
     proxy_set_header X-Forwarded-Proto $scheme;
 
-{% if nginx_sites.value.ssl_provider is defined %}
+{% if nginx_sites.value.ssl_provider | default(true) %}
     proxy_cookie_path {{ path }} "/; SameSite=None; HTTPOnly; Secure";
 {% endif %}
 
