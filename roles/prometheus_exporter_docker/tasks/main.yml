@@ -6,7 +6,7 @@
     owner: root
     group: root
 
-- name: Install daemon.json
+- name: Install docker-compose.yml
   copy:
     src: docker-compose.yml
     dest: /root/cAdvisor/docker-compose.yml
@@ -17,6 +17,4 @@
 - name: docker-compose build
   command: docker-compose up -d
   args:
-      chdir: /root/cAdvisor
-
-    
+    chdir: /root/cAdvisor

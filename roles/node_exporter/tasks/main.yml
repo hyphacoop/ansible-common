@@ -1,70 +1,70 @@
 ---
-    - name: Set Listen IP
-      set_fact:
-        node_exporter_listen_ip: "127.0.0.1"
-      when: node_exporter_listen_localhost == true
-    
-    - name: Set Listen IP
-      set_fact:
-        node_exporter_listen_ip: "[::]"
-      when: node_exporter_listen_localhost == false
-    
-    - name: Create node_exporter group
-      group:
-        name: node_exporter
-        system: yes
-        state: present
-    
-    - name: Create node_exporter user
-      user:
-        name: node_exporter
-        group: node_exporter
-        append: no
-        shell: /bin/bash
-        system: yes
-        state: present
-    
-    - name: Download Node Exporter
-      unarchive:
-        src: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
-        dest: /opt/
-        remote_src: yes
-    
-    - name: Create link to Node Exporter version
-      file:
-        src: /opt/node_exporter-{{ node_exporter_version }}.linux-amd64
-        dest: /opt/node_exporter
-        state: link
-    
-    - name: Create directory /opt/node_exporter/textfiles
-      file:
-        path: /opt/node_exporter/textfiles/
-        state: directory
-        mode: '0700'
-        owner: node_exporter
-        group: node_exporter
-    
-    - name: Chown /opt/node_exporter to node_exporter
-      file:
-        path: /opt/node_exporter
-        state: directory
-        owner: node_exporter
-        group: node_exporter
-        mode: '0700'
-        recurse: yes
-    
-    - name: Install node_exporter systemd service
-      template:
-        src: node_exporter.service.j2
-        dest: /etc/systemd/system/node_exporter.service
-        mode: 0644
-    
-    - name: Reload systemd daemon
-      systemd:
-        daemon_reload: yes
-    
-    - name: Enable and start node_exporter service
-      systemd:
-        name: node_exporter
-        enabled: yes
-        state: started
+- name: Set Listen IP
+  set_fact:
+    node_exporter_listen_ip: "127.0.0.1"
+  when: node_exporter_listen_localhost == true
+
+- name: Set Listen IP
+  set_fact:
+    node_exporter_listen_ip: "[::]"
+  when: node_exporter_listen_localhost == false
+
+- name: Create node_exporter group
+  group:
+    name: node_exporter
+    system: yes
+    state: present
+
+- name: Create node_exporter user
+  user:
+    name: node_exporter
+    group: node_exporter
+    append: no
+    shell: /bin/bash
+    system: yes
+    state: present
+
+- name: Download Node Exporter
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Create link to Node Exporter version
+  file:
+    src: /opt/node_exporter-{{ node_exporter_version }}.linux-amd64
+    dest: /opt/node_exporter
+    state: link
+
+- name: Create directory /opt/node_exporter/textfiles
+  file:
+    path: /opt/node_exporter/textfiles/
+    state: directory
+    mode: 0755
+    owner: node_exporter
+    group: node_exporter
+
+- name: Chown /opt/node_exporter to node_exporter
+  file:
+    path: /opt/node_exporter
+    state: directory
+    owner: node_exporter
+    group: node_exporter
+    mode: 0755
+    recurse: yes
+
+- name: Install node_exporter systemd service
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    mode: 0644
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start node_exporter service
+  systemd:
+    name: node_exporter
+    enabled: yes
+    state: started

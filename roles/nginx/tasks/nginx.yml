@@ -9,10 +9,15 @@
 - name: Configure nginx
   template:
     src: nginx-site.j2
-    dest: '/etc/nginx/sites-available/{{web_hostname}}'
+    dest: "/etc/nginx/sites-available/{{web_hostname}}"
 
 - name: Enabling {{inventory_hostname}} nginx config
   file:
     src: /etc/nginx/sites-available/{{web_hostname}}
     dest: /etc/nginx/sites-enabled/{{web_hostname}}
     state: link
+
+- name: Disable default nginx config
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
