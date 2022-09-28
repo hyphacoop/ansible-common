@@ -1,0 +1,6 @@
+---
+
+- name: Rebooting the machine
+  reboot:
+  tags:
+    reboot
