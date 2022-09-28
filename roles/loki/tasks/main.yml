@@ -9,7 +9,7 @@
 - name: "Install passlib"
   pip:
     name: 
-      - passlib
+      - passlib>=1.7.4,<1.8.0
 
 - name: Create prometheus group
   group:
