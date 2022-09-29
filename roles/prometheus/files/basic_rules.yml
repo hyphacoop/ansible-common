@@ -94,7 +94,7 @@ groups:
       description: "CPU load is over 95% for the past 5 minutes\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
 
   - alert: SystemdServiceCrashed
-    expr: node_systemd_unit_state{state="failed"} == 1
+    expr: node_systemd_unit_state{state="failed", type!="oneshot"} == 1
     for: 1m
     labels:
       severity: warning
