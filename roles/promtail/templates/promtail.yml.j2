@@ -6,7 +6,7 @@ positions:
   filename: /tmp/positions.yaml
 
 client:
-  url: {{ loki_url }}
+  url: "{{ loki_protocol }}://{{ loki_url }}"
   basic_auth:
     username: {{ loki_username }}
     password: {{ loki_password }}
