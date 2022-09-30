@@ -1,0 +1,15 @@
+---
+- name: Install fail2ban 
+  apt:
+    name:
+      - fail2ban 
+
+- name: Update fail2ban config
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local 
+
+- name: Restart Fail2Ban
+  service:
+      name: fail2ban
+      state: restarted
