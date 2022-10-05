@@ -3,7 +3,7 @@
     var: nginx_sites
 
 - include_tasks: letsencrypt.yml
-  when: nginx_sites.value.ssl_provider == "letsencrypt"
+  when: nginx_sites.value.ssl_provider is defined and nginx_sites.value.ssl_provider == "letsencrypt"
 
 - include_tasks: selfsign.yml
-  when: nginx_sites.value.ssl_provider == "selfsign"
+  when: nginx_sites.value.ssl_provider is defined and nginx_sites.value.ssl_provider == "selfsign"
