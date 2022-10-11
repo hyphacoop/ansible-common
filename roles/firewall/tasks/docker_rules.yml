@@ -45,7 +45,7 @@
         ip6tables -A DOCKER-USER \
         -i {{ firewall_docker_interface }} \
         -p {{ item.protocol | default('tcp') }} \
-        {% if item.source is defined %}-s {{ item.source }} {% endif %} \
+        {% if item.sourceIPv6 is defined %}-s {{ item.sourceIPv6 }} {% endif %} \
         -m conntrack \
         --ctorigdstport {{ item.port }} --ctdir ORIGINAL \        
         -j RETURN        
