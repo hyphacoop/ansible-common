@@ -39,7 +39,7 @@
     src: "LABEL={{provision_disk.value.label}}"
     fstype: ext4
     state: present
-  when: provision_disk.value.label is  defined
+  when: provision_disk.value.label is defined
 
 - name: Mount up device live
   ansible.posix.mount:
