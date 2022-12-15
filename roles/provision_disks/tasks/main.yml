@@ -3,3 +3,4 @@
   loop: "{{ provision_disk | dict2items }}"
   loop_control:
     loop_var: provision_disk
+  when: provision_disk is defined
