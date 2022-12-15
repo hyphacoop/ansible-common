@@ -30,7 +30,7 @@
   when: provision_disk.value.label is not defined
 
 - name: Set mount label
-  shell: "e2label /dev/sdb1 {{provision_disk.value.mount_point}}"
+  shell: "e2label /dev/sdb1 {{provision_disk.value.label}}"
   when: provision_disk.value.label is defined
 
 - name: Mount up device fstab - Label
