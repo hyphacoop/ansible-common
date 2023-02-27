@@ -21,6 +21,8 @@
       - software-properties-common
       - haveged
       - wget
+      - acl
+      - net-tools
 
 - name: Install common diagnostic tools
   apt:
@@ -38,6 +40,11 @@
       - git
       - build-essential
   when: setup_build == true
+  
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+  when: hostname_inventory is defined
 
 - name: Set timezone
   timezone:
