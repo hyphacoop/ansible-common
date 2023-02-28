@@ -3,6 +3,10 @@
   apt:
     pkg:
       - parted
+
+- name: debug
+  debug:
+    var: provision_disk.value.label
 - name: Create a new ext4 primary partition
   community.general.parted:
     device: "/dev/{{provision_disk.key}}"
@@ -21,7 +25,14 @@
     path: "{{ provision_disk.value.mount_point }}"
     state: directory    
 
-- name: Mount up device fstab - dev
+- name: Mount up device _ Live
+  ansible.posix.mount:
+    path: "{{ provision_disk.value.mount_point }}"
+    src: /dev/sdb1
+    fstype: ext4
+    state: mounted
+
+- name: Mount up device fstab - Dev
   ansible.posix.mount:
     path: "{{ provision_disk.value.mount_point }}"
     src: /dev/sdb1
@@ -41,9 +52,3 @@
     state: present
   when: provision_disk.value.label is defined
 
-- name: Mount up device live
-  ansible.posix.mount:
-    path: "{{ provision_disk.value.mount_point }}"
-    src: /dev/sdb1
-    fstype: ext4
-    state: mounted
