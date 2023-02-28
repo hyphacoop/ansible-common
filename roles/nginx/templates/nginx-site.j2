@@ -6,8 +6,12 @@ server {
   location / {
     return 301 https://$host$request_uri;
   }
-  location /.well-known {
-    root /var/www/html/.well-known;
+  location ^~ /.well-known/acme-challenge/ {
+    default_type "text/plain";    
+    root /var/www/html/;
+  }
+  location = /.well-known/acme-challenge/ {
+    return 404;
   }
   root /var/www/html;
 }
