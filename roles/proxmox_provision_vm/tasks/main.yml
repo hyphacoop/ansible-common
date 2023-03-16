@@ -206,6 +206,7 @@
   apt:
     name:
       - qemu-guest-agent
+    update_cache: true
   when: kvm_qemu_agent == true
 
 
