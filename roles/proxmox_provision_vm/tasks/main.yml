@@ -152,10 +152,6 @@
   when:
     - pve_disk_size is defined
 
-- name: "Wait 15 seconds"
-  ansible.builtin.pause:
-    seconds: 15
-
 - name: "Check to see if virtio1 disk already created"
   become: true
   delegate_to: "{{ node }}"
@@ -182,6 +178,12 @@
 - name: "Disable quemu"
   ansible.builtin.shell: 
     cmd: "qm set {{ kvm_id }} --agent 0"
+  delegate_to: "{{ node }}"
+  when: kvm_qemu_agent == false
+
+- name: "enable serial0"
+  ansible.builtin.shell: 
+    cmd: "qm set {{ kvm_id }} -serial0 socket"
   delegate_to: "{{ node }}"
   when: kvm_qemu_agent == false
 
