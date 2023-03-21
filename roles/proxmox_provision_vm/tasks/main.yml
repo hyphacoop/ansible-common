@@ -197,10 +197,13 @@
   delegate_to: "{{ node }}"
   when: kvm_start == true
 
-- name: Waiting for server to start up
-  wait_for_connection:
-    sleep: 15
-    timeout: 15
+- name: Wait for SSH to be ready {{ inventory_hostname }}
+  wait_for:
+    port: 22
+    host: "{{ inventory_hostname }}"
+    search_regex: OpenSSH
+    delay: 10
+  when: start_vm.changed
 
 - name: Write the new ssh instance host key to known hosts
   connection: local
