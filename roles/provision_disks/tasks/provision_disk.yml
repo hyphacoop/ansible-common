@@ -14,7 +14,7 @@
     state: present
     fs_type: ext4
 
-- name: Format /dev/{{provision_disk.key}}
+- name: Format /dev/{{provision_disk.key}}1
   filesystem:
      fstype: ext4
      dev: "/dev/{{provision_disk.key}}1"
@@ -28,20 +28,20 @@
 - name: Mount up device Live - /dev/{{provision_disk.key}}
   ansible.posix.mount:
     path: "{{ provision_disk.value.mount_point }}"
-    src: "/dev/{{provision_disk.key}}"
+    src: "/dev/{{provision_disk.key}}1"
     fstype: ext4
     state: mounted
 
 - name: Mount up device fstab - /dev/{{provision_disk.key}}
   ansible.posix.mount:
     path: "{{ provision_disk.value.mount_point }}"
-    src: "/dev/{{provision_disk.key}}"
+    src: "/dev/{{provision_disk.key}}1"
     fstype: ext4
     state: present
   when: provision_disk.value.label is not defined
 
 - name: Setting ext label
-  shell: "e2label /dev/{{provision_disk.key}} {{provision_disk.value.label}}"
+  shell: "e2label /dev/{{provision_disk.key}}1 {{provision_disk.value.label}}"
   when: provision_disk.value.label is defined
 
 - name: Mount up device fstab - Label
