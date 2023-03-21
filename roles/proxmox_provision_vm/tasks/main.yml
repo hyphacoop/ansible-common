@@ -203,7 +203,7 @@
     host: "{{ inventory_hostname }}"
     search_regex: OpenSSH
     delay: 10
-  when: start_vm.changed
+  when: kvm_start == true
 
 - name: Write the new ssh instance host key to known hosts
   connection: local
