@@ -146,7 +146,7 @@
 
 - name: "Grow up virtual machine disks"
   ansible.builtin.shell: 
-    cmd: "sudo qm resize {{ kvm_id }} scsi0 {{ pve_disk_size }}"
+    cmd: "sudo qm resize {{ kvm_id }} virtio0 {{ pve_disk_size }}"
   delegate_to: "{{ node }}"
   ignore_errors: true
   when:
