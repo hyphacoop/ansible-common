@@ -152,22 +152,22 @@
   when:
     - pve_disk_size is defined
 
-- name: "Check to see if scsi1 disk already created"
+- name: "Check to see if virtio0 disk already created"
   become: true
   delegate_to: "{{ node }}"
-  shell: "qm config {{ kvm_id }} | grep scsi1"
-  register: scsi1check
+  shell: "qm config {{ kvm_id }} | grep virtio0"
+  register: virtio0check
   ignore_errors: true
   when: 
-    - kvm_disk_scsi1 is defined
+    - kvm_disk_virtio0 is defined
 
-- name: "Create scsi1 disk"
+- name: "Create virtio0 disk"
   become: true
   delegate_to: "{{ node }}"
-  command: "qm set {{ kvm_id }} --scsi1 {{kvm_disk_scsi1}}"
+  command: "qm set {{ kvm_id }} --virtio0 {{kvm_disk_virtio0}}"
   when: 
-    - kvm_disk_scsi1 is defined
-    - scsi1check.stdout_lines[0] is not defined
+    - kvm_disk_virtio0 is defined
+    - virtio0check.stdout_lines[0] is not defined
   
 - name: "Enable quemu"
   ansible.builtin.shell: 
