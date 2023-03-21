@@ -152,6 +152,10 @@
   when:
     - pve_disk_size is defined
 
+- name: "Wait 15 seconds"
+  ansible.builtin.pause:
+    seconds: 15
+
 - name: "Check to see if virtio1 disk already created"
   become: true
   delegate_to: "{{ node }}"
