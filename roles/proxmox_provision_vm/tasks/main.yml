@@ -185,7 +185,6 @@
   ansible.builtin.shell: 
     cmd: "qm set {{ kvm_id }} -serial0 socket"
   delegate_to: "{{ node }}"
-  when: kvm_qemu_agent == false
 
 - name: Start VM
   community.general.proxmox_kvm:
