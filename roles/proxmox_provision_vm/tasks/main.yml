@@ -198,6 +198,7 @@
   when: kvm_start == true
 
 - name: Wait for SSH to be ready {{ inventory_hostname }}
+  connection: local
   wait_for:
     port: 22
     host: "{{ inventory_hostname }}"
