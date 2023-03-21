@@ -152,21 +152,21 @@
   when:
     - pve_disk_size is defined
 
-- name: "Check to see if virtio0 disk already created"
+- name: "Check to see if virtio1 disk already created"
   become: true
   delegate_to: "{{ node }}"
-  shell: "qm config {{ kvm_id }} | grep virtio0"
-  register: virtio0check
+  shell: "qm config {{ kvm_id }} | grep virtio1"
+  register: virtio1check
   ignore_errors: true
   when: 
-    - kvm_disk_virtio0 is defined
+    - kvm_disk_virtio1 is defined
 
-- name: "Create virtio0 disk"
+- name: "Create virtio1 disk"
   become: true
   delegate_to: "{{ node }}"
-  command: "qm set {{ kvm_id }} --virtio0 {{kvm_disk_virtio0}}"
+  command: "qm set {{ kvm_id }} --virtio0 {{kvm_disk_virtio1}}"
   when: 
-    - kvm_disk_virtio0 is defined
+    - kvm_disk_virtio1 is defined
     - virtio0check.stdout_lines[0] is not defined
   
 - name: "Enable quemu"
