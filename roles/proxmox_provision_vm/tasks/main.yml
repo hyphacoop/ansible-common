@@ -202,7 +202,7 @@
     port: 22
     host: "{{ inventory_hostname }}"
     search_regex: OpenSSH
-    delay: 10
+    delay: 180
   when: kvm_start == true
 
 - name: Write the new ssh instance host key to known hosts
