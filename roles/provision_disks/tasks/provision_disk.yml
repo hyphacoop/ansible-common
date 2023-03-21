@@ -41,7 +41,7 @@
   when: provision_disk.value.label is not defined
 
 - name: Setting ext label
-  shell: "e2label "/dev/{{provision_disk.key}}" {{provision_disk.value.label}}"
+  shell: "e2label /dev/{{provision_disk.key}} {{provision_disk.value.label}}"
   when: provision_disk.value.label is defined
 
 - name: Mount up device fstab - Label
