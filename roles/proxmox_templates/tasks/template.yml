@@ -59,7 +59,7 @@
 
 - name: import init disk
   ansible.builtin.command:
-    cmd: "qm importdisk {{vmid}} {{template.key}}.qcow2 local --format qcow2"
+    cmd: "qm importdisk {{vmid}} /root/{{template.key}}.qcow2 local --format qcow2"
   when: vm_created.changed
   register: vm_image
 
