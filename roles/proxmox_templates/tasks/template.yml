@@ -33,11 +33,11 @@
     name: "{{name}}"
 
     scsihw: virtio-scsi-pci
-    scsi:
-      scsi0: 'local:1,format=raw'
+    virtio:
+      virtio0: 'local:1,format=raw'
     ide:
       ide2: 'local:cloudinit,format=qcow2'
-    bootdisk: scsi0
+    bootdisk: virtio0
 
     ciuser: sysadmin
     cipassword: password
@@ -66,8 +66,8 @@
 - name: Attach base image disk
   ansible.builtin.lineinfile:
     path: "/etc/pve/local/qemu-server/{{vmid}}.conf"
-    regexp: '^scsi0:.*'
-    line: "scsi0: local:{{vmid}}/vm-{{vmid}}-disk-1.qcow2"
+    regexp: '^virtio0:.*'
+    line: "virtio0: local:{{vmid}}/vm-{{vmid}}-disk-1.qcow2"
   when: vm_created.changed
 
 - name: Delete unused image disk
