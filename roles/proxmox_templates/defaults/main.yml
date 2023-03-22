@@ -1,0 +1,8 @@
+templates:
+  debian10:
+    url: https://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.qcow2
+    id: 1
+  debian11:
+    url: xhttps://cdimage.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2
+    id: 2
+cluster: true
