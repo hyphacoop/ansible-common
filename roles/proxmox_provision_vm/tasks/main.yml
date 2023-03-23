@@ -217,6 +217,7 @@
       - qemu-guest-agent
     update_cache: true
   when: kvm_qemu_agent == true
+  retries: 50
 
 
 - name: Enable qemu-guest-agent
