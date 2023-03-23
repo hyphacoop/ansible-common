@@ -217,8 +217,9 @@
       - qemu-guest-agent
     update_cache: true
   when: kvm_qemu_agent == true
+  register: install_qemu_guest_agent
   retries: 50
-
+  until: install_qemu_guest_agent is success
 
 - name: Enable qemu-guest-agent
   systemd:
