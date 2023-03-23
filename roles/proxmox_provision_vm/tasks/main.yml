@@ -164,7 +164,7 @@
 - name: "Create virtio1 disk"
   become: true
   delegate_to: "{{ node }}"
-  command: "qm set {{ kvm_id }} --virtio1 {{kvm_disk_virtio1}}"
+  command: "qm set {{ kvm_id }} --virtio1 {{kvm_disk_virtio1}},format=qcow2"
   when: 
     - kvm_disk_virtio1 is defined
     - virtio1check.stdout_lines[0] is not defined
