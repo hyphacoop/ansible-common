@@ -23,6 +23,7 @@
       - wget
       - acl
       - net-tools
+      - sudo
 
 - name: Install common diagnostic tools
   apt:
