@@ -1,9 +1,12 @@
 ---
 - name: Install parted
   apt:
+    update_cache: true
     pkg:
       - parted
+  register: apt_cache
   retries: 50
+  until: apt_cache is success
 - name: Create a new ext4 primary partition
   community.general.parted:
     device: "/dev/{{provision_disk.key}}"
