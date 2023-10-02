@@ -195,7 +195,7 @@
 - name: Waiting for server to start up
   wait_for_connection:
     sleep: 15
-    timeout: 15
+    timeout: 600
 
 - name: Write the new ssh instance host key to known hosts
   connection: local
