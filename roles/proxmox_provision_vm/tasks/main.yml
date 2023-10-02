@@ -204,8 +204,12 @@
 
 - name: Install qemu-guest-agent
   apt:
-    name:
+    update_cache: true
+    pkg:
       - qemu-guest-agent
+  register: apt_cache
+  retries: 50
+  until: apt_cache is success
   when: kvm_qemu_agent == true
 
 
