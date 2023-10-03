@@ -72,21 +72,75 @@
     state: absent
   when: vm_created.changed
 
-- name: Create debian VM
+# - name: Create debian VM
+#   community.general.proxmox_kvm:
+#     api_user: "{{ proxmox_api_user }}"
+#     api_password: "{{ proxmox_api_password }}"
+#     api_host: "{{ proxmox_api_host }}"
+#     vmid: 9001
+#     node: "{{ inventory_hostname }}"
+#     name: "Debian11"
+
+#     scsihw: virtio-scsi-pci
+#     scsi:
+#       scsi0: 'local:1,format=raw'
+#     ide:
+#       ide2: 'local:cloudinit,format=qcow2'
+#     bootdisk: scsi0
+
+#     ciuser: sysadmin
+#     cipassword: password
+#     net:
+#       net0: 'virtio,bridge=vmbr0'
+#     ipconfig:
+#       ipconfig0: 'ip=127.0.0.9/32'
+#     vga: std
+#     cpu: host
+#     template: yes
+#     proxmox_default_behavior: no_defaults     
+#   register: vm_created 
+
+# - name: Download CloudImage Debian11
+#   get_url:
+#     url: https://cdimage.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2
+#     dest: /root/debian11.qcow2
+#   when: vm_created.changed
+
+# - name: Import Debian11 disk
+#   ansible.builtin.command:
+#     cmd: "qm importdisk 9001 /root/debian11.qcow2 local --format qcow2"
+#   when: vm_created.changed
+#   register: vm_image
+
+# - name: Attach Debian11 disk
+#   ansible.builtin.lineinfile:
+#     path: /etc/pve/local/qemu-server/9001.conf
+#     regexp: '^scsi0:.*'
+#     line: 'scsi0: local:9001/vm-9001-disk-1.qcow2'
+#   when: vm_created.changed
+
+# - name: Delete unused image disk
+#   ansible.builtin.lineinfile:
+#     path: /etc/pve/local/qemu-server/9001.conf
+#     regexp: '^unused0:.*'
+#     state: absent
+#   when: vm_created.changed
+
+- name: Create debian 12 VM
   community.general.proxmox_kvm:
     api_user: "{{ proxmox_api_user }}"
     api_password: "{{ proxmox_api_password }}"
     api_host: "{{ proxmox_api_host }}"
-    vmid: 9001
+    vmid: 9003
     node: "{{ inventory_hostname }}"
     name: "Debian11"
 
     scsihw: virtio-scsi-pci
-    scsi:
-      scsi0: 'local:1,format=raw'
+    virtio:
+      virtio0: 'local:1,format=qcow2'
     ide:
       ide2: 'local:cloudinit,format=qcow2'
-    bootdisk: scsi0
+    bootdisk: virtio0
 
     ciuser: sysadmin
     cipassword: password
@@ -100,28 +154,28 @@
     proxmox_default_behavior: no_defaults     
   register: vm_created 
 
-- name: Download CloudImage Debian11
+- name: Download CloudImage Debian12
   get_url:
-    url: https://cdimage.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2
-    dest: /root/debian11.qcow2
+    url: https://cdimage.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
+    dest: /root/debian12.qcow2
   when: vm_created.changed
 
-- name: Import Debian11 disk
+- name: Import Debian12 disk
   ansible.builtin.command:
-    cmd: "qm importdisk 9001 /root/debian11.qcow2 local --format qcow2"
+    cmd: "qm importdisk 9003 /root/debian11.qcow2 local --format qcow2"
   when: vm_created.changed
   register: vm_image
 
 - name: Attach Debian11 disk
   ansible.builtin.lineinfile:
-    path: /etc/pve/local/qemu-server/9001.conf
-    regexp: '^scsi0:.*'
-    line: 'scsi0: local:9001/vm-9001-disk-1.qcow2'
+    path: /etc/pve/local/qemu-server/9003.conf
+    regexp: '^virtio0:.*'
+    line: 'virtio0: local:9003/vm-9003-disk-1.qcow2'
   when: vm_created.changed
 
 - name: Delete unused image disk
   ansible.builtin.lineinfile:
-    path: /etc/pve/local/qemu-server/9001.conf
+    path: /etc/pve/local/qemu-server/9003.conf
     regexp: '^unused0:.*'
     state: absent
   when: vm_created.changed
@@ -129,41 +183,41 @@
 
 
 # Remove subscription warning
-- name: Remove subcription warning replace
-  replace:
-    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-    regexp: ".data.status.toLowerCase\\(\\) !== 'active'\\) "
-    replace: ".data.status !== 'active') if (false) "
-    backup: yes
+# - name: Remove subcription warning replace
+#   replace:
+#     path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+#     regexp: ".data.status.toLowerCase\\(\\) !== 'active'\\) "
+#     replace: ".data.status !== 'active') if (false) "
+#     backup: yes
 
-- name: Restart postfix
-  ansible.builtin.systemd:
-    state: restarted
-    enabled: true
-    name: pveproxy
+# - name: Restart postfix
+#   ansible.builtin.systemd:
+#     state: restarted
+#     enabled: true
+#     name: pveproxy
 
-- name: Disable VRFY and EXPN in mail server
-  lineinfile:
-    path: /etc/postfix/main.cf
-    regexp: '^disable_vrfy_command'
-    line: 'disable_vrfy_command=yes'
-    state: present
+# - name: Disable VRFY and EXPN in mail server
+#   lineinfile:
+#     path: /etc/postfix/main.cf
+#     regexp: '^disable_vrfy_command'
+#     line: 'disable_vrfy_command=yes'
+#     state: present
 
-- name: Securing SSL/TLS to V1.2
-  lineinfile:
-    path: /etc/postfix/main.cf
-    regexp: "^{{ item }}"
-    line: "{{ item }}=!SSLv2, !SSLv3, !TLSv1, !TLSv1.1"
-    state: present
-  loop:
-    - smtpd_tls_mandatory_protocols
-    - smtpd_tls_protocols
-    - smtp_tls_mandatory_protocols
-    - smtp_tls_protocols
+# - name: Securing SSL/TLS to V1.2
+#   lineinfile:
+#     path: /etc/postfix/main.cf
+#     regexp: "^{{ item }}"
+#     line: "{{ item }}=!SSLv2, !SSLv3, !TLSv1, !TLSv1.1"
+#     state: present
+#   loop:
+#     - smtpd_tls_mandatory_protocols
+#     - smtpd_tls_protocols
+#     - smtp_tls_mandatory_protocols
+#     - smtp_tls_protocols
 
 
-- name: Restart postfix
-  ansible.builtin.systemd:
-    state: restarted
-    enabled: true
-    name: postfix
+# - name: Restart postfix
+#   ansible.builtin.systemd:
+#     state: restarted
+#     enabled: true
+#     name: postfix
