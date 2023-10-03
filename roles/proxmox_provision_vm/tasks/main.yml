@@ -38,6 +38,7 @@
     name: "{{ inventory_hostname }}"
     node: "{{ node }}"
     clone: "{{ kvm_template }}"
+    storage: "{{ pve_disk_storage }}"
     full: true
     format: qcow2
     newid: "{{ kvm_id }}"
