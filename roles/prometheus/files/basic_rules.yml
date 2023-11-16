@@ -1,4 +1,5 @@
 groups:
+
 - name: nodexporter-HostOSMonitor
   rules:
   - alert: Node down
@@ -11,22 +12,22 @@ groups:
       description: Failed to scrape {{ $labels.job }} on {{ $labels.instance }} for more than 2 minutes. Node seems down.
 
   - alert: HostOutOfMemory-Error
-    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 5
     for: 10m
     labels:
       severity: error
     annotations:
       summary: "Out of memory (instance {{ $labels.instance }})"
-      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      description: "Node memory is filling up (< 5% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
 
   - alert: HostOutOfMemory-Warning
-    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 20
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
     for: 15m
     labels:
       severity: warning
     annotations:
       summary: "Out of memory (instance {{ $labels.instance }})"
-      description: "Node memory is filling up (< 20% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
 
   - alert: OutOfLocalDiskSpace
     expr: (node_filesystem_avail_bytes{mountpoint="/"} * 100) / node_filesystem_size_bytes{mountpoint="/"} < 10
