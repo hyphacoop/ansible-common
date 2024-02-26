@@ -1,0 +1,4 @@
+- include_tasks: template.yml
+  loop: "{{ templates | dict2items  }}"
+  loop_control:
+    loop_var: template

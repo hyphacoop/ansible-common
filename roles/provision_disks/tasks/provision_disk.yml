@@ -3,34 +3,45 @@
   apt:
     pkg:
       - parted
-- name: Create a new ext4 primary partition
+
+- name: debug
+  debug:
+    var: provision_disk.value.label
+- name: Create a new ext4 primary partition /dev/{{provision_disk.key}}
   community.general.parted:
     device: "/dev/{{provision_disk.key}}"
     number: 1
     state: present
     fs_type: ext4
 
-- name: Format sdb1
+- name: Format /dev/{{provision_disk.key}}1
   filesystem:
      fstype: ext4
      dev: "/dev/{{provision_disk.key}}1"
      resizefs: true
 
-- name: Creates directory
+- name: Creates directory {{ provision_disk.value.mount_point }}
   file:
     path: "{{ provision_disk.value.mount_point }}"
     state: directory    
 
-- name: Mount up device fstab - dev
+- name: Mount up device Live - /dev/{{provision_disk.key}}
   ansible.posix.mount:
     path: "{{ provision_disk.value.mount_point }}"
-    src: /dev/sdb1
+    src: "/dev/{{provision_disk.key}}1"
+    fstype: ext4
+    state: mounted
+
+- name: Mount up device fstab - /dev/{{provision_disk.key}}
+  ansible.posix.mount:
+    path: "{{ provision_disk.value.mount_point }}"
+    src: "/dev/{{provision_disk.key}}1"
     fstype: ext4
     state: present
   when: provision_disk.value.label is not defined
 
-- name: Set mount label
-  shell: "e2label /dev/sdb1 {{provision_disk.value.mount_point}}"
+- name: Setting ext label
+  shell: "e2label /dev/{{provision_disk.key}}1 {{provision_disk.value.label}}"
   when: provision_disk.value.label is defined
 
 - name: Mount up device fstab - Label
@@ -39,11 +50,5 @@
     src: "LABEL={{provision_disk.value.label}}"
     fstype: ext4
     state: present
-  when: provision_disk.value.label is  defined
+  when: provision_disk.value.label is defined
 
-- name: Mount up device live
-  ansible.posix.mount:
-    path: "{{ provision_disk.value.mount_point }}"
-    src: /dev/sdb1
-    fstype: ext4
-    state: mounted

@@ -6,8 +6,12 @@ server {
   location / {
     return 301 https://$host$request_uri;
   }
-  location /.well-known {
-    root /var/www/html/.well-known;
+  location ^~ /.well-known/acme-challenge/ {
+    default_type "text/plain";    
+    root /var/www/html/;
+  }
+  location = /.well-known/acme-challenge/ {
+    return 404;
   }
   root /var/www/html;
 }
@@ -65,7 +69,9 @@ server {
 {% endif %}
 
   add_header X-Content-Type-Options nosniff;
+{% if nginx_sites.value.xframeoptions | default(false) %}
   add_header X-Frame-Options DENY;
+{% endif %}
   keepalive_timeout 60;
 
 {% for path, location in nginx_sites.value.locations.items() %}

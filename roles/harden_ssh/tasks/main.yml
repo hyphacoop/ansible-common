@@ -8,6 +8,7 @@
     validate: "/usr/sbin/sshd -tf %s"
     backup: true
   register: ssh_harden_root
+  when: ansible_user != "root"
 
 - name: Disable password authentication for SSH
   lineinfile:
