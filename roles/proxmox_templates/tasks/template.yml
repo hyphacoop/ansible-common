@@ -22,7 +22,6 @@
     vmid: "{{ (9000 + template.value.id) + vmid_cluster | int }}"
     name: "{{inventory_hostname}}-{{ template.key}}"
   when: cluster == true
-
 - name: Create debian VM
   community.general.proxmox_kvm:
     api_user: "{{ proxmox_api_user }}"

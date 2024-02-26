@@ -5,4 +5,7 @@ templates:
   debian11:
     url: https://cdimage.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2
     id: 2
+  debian12:
+    url: https://cdimage.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
+    id: 3
 cluster: false
