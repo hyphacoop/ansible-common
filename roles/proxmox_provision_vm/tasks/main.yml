@@ -146,28 +146,28 @@
 
 - name: "Grow up virtual machine disks"
   ansible.builtin.shell: 
-    cmd: "sudo qm resize {{ kvm_id }} scsi0 {{ pve_disk_size }}"
+    cmd: "sudo qm resize {{ kvm_id }} virtio0 {{ pve_disk_size }}"
   delegate_to: "{{ node }}"
   ignore_errors: true
   when:
     - pve_disk_size is defined
 
-- name: "Check to see if scsi1 disk already created"
+- name: "Check to see if virtio1 disk already created"
   become: true
   delegate_to: "{{ node }}"
-  shell: "qm config {{ kvm_id }} | grep scsi1"
-  register: scsi1check
+  shell: "qm config {{ kvm_id }} | grep virtio1"
+  register: virtio1check
   ignore_errors: true
   when: 
-    - kvm_disk_scsi1 is defined
+    - kvm_disk_virtio1 is defined
 
-- name: "Create scsi1 disk"
+- name: "Create virtio1 disk"
   become: true
   delegate_to: "{{ node }}"
-  command: "qm set {{ kvm_id }} --scsi1 {{kvm_disk_scsi1}}"
+  command: "qm set {{ kvm_id }} --virtio1 {{kvm_disk_virtio1}}"
   when: 
-    - kvm_disk_scsi1 is defined
-    - scsi1check.stdout_lines[0] is not defined
+    - kvm_disk_virtio1 is defined
+    - virtio1check.stdout_lines[0] is not defined
   
 - name: "Enable quemu"
   ansible.builtin.shell: 
@@ -194,8 +194,8 @@
 
 - name: Waiting for server to start up
   wait_for_connection:
-    sleep: 15
-    timeout: 15
+    sleep: 1
+    timeout: 600
 
 - name: Write the new ssh instance host key to known hosts
   connection: local
@@ -206,8 +206,11 @@
   apt:
     name:
       - qemu-guest-agent
+    update_cache: true
   when: kvm_qemu_agent == true
-
+  register: install_qemu_guest_agent
+  retries: 50
+  until: install_qemu_guest_agent is success
 
 - name: Enable qemu-guest-agent
   systemd:
