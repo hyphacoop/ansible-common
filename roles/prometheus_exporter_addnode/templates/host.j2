@@ -19,4 +19,11 @@
     }
   }
 {% endif %}
+{% if gpu_exporter_port is defined %},
+  {
+    "targets": ["{{ inventory_hostname }}:{{ gpu_exporter_port }}"],
+    "labels": {
+        "job": "{{ monitor_job | default('nodeexporter') }}"
+    }
+  }{% endif %}
 ]

@@ -1,4 +1,8 @@
 ---
+- name: Ensure zip is installed
+  apt:
+    name: zip
+    state: present
 - name: Create Promtail user
   user:
     name: promtail
