@@ -22,7 +22,8 @@
 
 - name: Update user keys
   ansible.posix.authorized_key:
-    user: "sysadmin"
+#    user: "sysadmin"
+    user: "{{ ansible_user }}"
     state: present
     key: "{{ item.key }}"
   with_items: "{{ ssh_user_keys + ssh_additional_user_keys | default([])}}"
