@@ -15,10 +15,9 @@
     state: present
 
 - name: Install nvidia  Exporter
-  unarchive:
+  get_url:
     src: https://github.com/utkuozdemir/nvidia_gpu_exporter/releases/download/v{{nvidia_exporter_version}}/nvidia-gpu-exporter_{{nvidia_exporter_version}}_linux_amd64.deb
-    dest: /opt/
-    remote_src: yes
+    dest: /opt/nvidia-gpu-exporter_{{nvidia_exporter_version}}_linux_amd64.deb
 
 - name: Install the NVIDIA GPU Exporter .deb package
   apt:
