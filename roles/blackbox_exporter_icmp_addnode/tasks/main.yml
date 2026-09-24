@@ -1,5 +1,5 @@
 ---
-- name: Add Node Config to Prometheus
+- name: Add Node Config to to Blackbox ICMP
   template: 
     src: host.j2
     dest: /opt/prometheus/blackbox-icmp.d/{{ inventory_hostname }}.json

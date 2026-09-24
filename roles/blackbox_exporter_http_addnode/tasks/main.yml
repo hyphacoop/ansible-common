@@ -1,5 +1,5 @@
 ---
-- name: Add Node Config to Prometheus
+- name: Add Node Config to Blackbox HTTP
   template: 
     src: host.j2
     dest: /opt/prometheus/blackbox-http.d/{{ inventory_hostname }}.json
