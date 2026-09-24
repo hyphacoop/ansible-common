@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+{% set h = hostvars[item] %}
+{% for t in h.blackbox_targets %}
+- targets:
+    - {{ t.url | to_json }}
+  labels: {{ ({'module': t.module, 'host': item} | combine(h.blackbox_labels | default({})) | combine(t.labels | default({}))) | to_json }}
+{% endfor %}
