@@ -10,13 +10,17 @@
     "labels": {
         "job": "{{ monitor_job | default('nodeexporter') }}"
     }
-  }{% endif %}
-{% if cadvisor_exporter_port is defined %},
+  }{% endif %}{% if cadvisor_exporter_port is defined %},
   {
     "targets": ["{{ inventory_hostname }}:{{ cadvisor_exporter_port }}"],
     "labels": {
         "job": "{{ monitor_job | default('nodeexporter') }}"
     }
-  }
-{% endif %}
+  }{% endif %}{% for t in prometheus_extra_targets | default([]) %},
+  {
+    "targets": ["{{ inventory_hostname }}:{{ t.port }}"],
+    "labels": {{ {'job': t.job | default(monitor_job | default('nodeexporter'))}
+                 | combine({'__metrics_path__': t.path} if t.path is defined else {})
+                 | combine(t.labels | default({})) | to_json }}
+  }{% endfor %}
 ]

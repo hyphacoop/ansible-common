@@ -1,0 +1,10 @@
+[
+  {
+    "targets": ["{{ inventory_hostname }}"],
+    "labels": {
+      "job": "{{ monitor_job | default('nodeexporter') }}",
+      "environment": "icmp-probe",
+      "service": "icmp-probe"
+    }
+  }
+]

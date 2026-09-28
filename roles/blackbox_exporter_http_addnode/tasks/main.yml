@@ -1,0 +1,8 @@
+---
+- name: Add Node Config to Blackbox HTTP
+  template:
+    src: host.j2
+    dest: /opt/prometheus/blackbox-http.d/{{ item }}.yml
+  loop: "{{ groups['http'] | default([]) }}"
+  delegate_to: "{{ monitor_server }}"
+  run_once: true
