@@ -20,6 +20,7 @@
   {
     "targets": ["{{ inventory_hostname }}:{{ t.port }}"],
     "labels": {{ {'job': t.job | default(monitor_job | default('nodeexporter'))}
+                 | combine({'__scheme__': t.scheme} if t.scheme is defined else {})
                  | combine({'__metrics_path__': t.path} if t.path is defined else {})
                  | combine(t.labels | default({})) | to_json }}
   }{% endfor %}
