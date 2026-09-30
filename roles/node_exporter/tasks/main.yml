@@ -58,6 +58,7 @@
     src: node_exporter.service.j2
     dest: /etc/systemd/system/node_exporter.service
     mode: 0644
+  register: node_exporter_service
 
 - name: Reload systemd daemon
   systemd:
@@ -67,4 +68,4 @@
   systemd:
     name: node_exporter
     enabled: yes
-    state: started
+    state: "{{ 'restarted' if node_exporter_service is changed else 'started' }}"
