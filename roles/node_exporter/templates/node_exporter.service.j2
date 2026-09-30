@@ -3,7 +3,7 @@ Description=Node Exporter
 
 [Service]
 User=node_exporter
-ExecStart=/opt/node_exporter/node_exporter --web.listen-address={{ node_exporter_listen_ip }}:{{ node_exporter_port }} --collector.systemd --collector.textfile.directory="/opt/node_exporter/textfiles"
+ExecStart=/opt/node_exporter/node_exporter --web.listen-address={{ node_exporter_listen_ip }}:{{ node_exporter_port }} --web.telemetry-path={{ node_exporter_path }} --collector.systemd --collector.textfile.directory="/opt/node_exporter/textfiles"
 
 [Install]
 WantedBy=multi-user.target

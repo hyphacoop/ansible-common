@@ -3,6 +3,7 @@
     "targets": ["{{ inventory_hostname }}:{{ node_exporter_port | default(9100) }}"],
     "labels": {{ {'job': monitor_job | default('nodeexporter')}
                  | combine({'__scheme__': node_exporter_scheme} if node_exporter_scheme is defined else {})
+                 | combine({'__metrics_path__': node_exporter_path} if node_exporter_path is defined else {})
                  | to_json }}
   }{% if bbb_exporter_port is defined %},
   {
