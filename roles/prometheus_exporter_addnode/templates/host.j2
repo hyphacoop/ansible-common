@@ -1,9 +1,9 @@
 [
   {
-    "targets": ["{{ inventory_hostname }}:9100"],
-    "labels": {
-        "job": "{{ monitor_job | default('nodeexporter') }}"
-    }
+    "targets": ["{{ inventory_hostname }}:{{ node_exporter_port | default(9100) }}"],
+    "labels": {{ {'job': monitor_job | default('nodeexporter')}
+                 | combine({'__scheme__': node_exporter_scheme} if node_exporter_scheme is defined else {})
+                 | to_json }}
   }{% if bbb_exporter_port is defined %},
   {
     "targets": ["{{ inventory_hostname }}:{{ bbb_exporter_port }}"],
