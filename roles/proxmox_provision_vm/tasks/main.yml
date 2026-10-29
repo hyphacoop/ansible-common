@@ -30,7 +30,7 @@
     line: "{{ kvm_ip_address }} {{ inventory_hostname }}"
   when: kvm_ip_address is defined and add_local_host
 
-- name: "Ensure proxmoxer is installed on the Proxmox node"
+- name: "Ensure proxmoxer is installed on each Proxmox node"
   ansible.builtin.apt:
     name:
       - python3-proxmoxer
@@ -39,7 +39,10 @@
     update_cache: true
     cache_valid_time: 3600
   become: true
-  delegate_to: "{{ node }}"
+  delegate_to: "{{ item }}"
+  loop: "{{ ansible_play_hosts | map('extract', hostvars, 'node') | unique }}"
+  run_once: true
+
 
 - name: Create new VM with minimal options
   community.proxmox.proxmox_kvm:
