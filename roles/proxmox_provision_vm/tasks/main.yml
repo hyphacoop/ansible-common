@@ -41,10 +41,9 @@
     full: true
     format: qcow2
     newid: "{{ kvm_id }}"
-    throttle: 1
-
   register: pve_kvm_virtual_created
   delegate_to: "{{ node }}"
+  throttle: 1
 
 - name: "Post-clone configuration: update virtual machine resources"
   community.proxmox.proxmox_kvm:
