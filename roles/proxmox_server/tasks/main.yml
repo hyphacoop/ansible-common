@@ -19,7 +19,7 @@
 
 
 - name: Create debian VM
-  community.general.proxmox_kvm:
+  community.proxmox.proxmox_kvm:
     api_user: "{{ proxmox_api_user }}"
     api_password: "{{ proxmox_api_password }}"
     api_host: "{{ proxmox_api_host }}"
@@ -43,7 +43,6 @@
     vga: std
     cpu: host
     template: yes
-    proxmox_default_behavior: no_defaults 
   register: vm_created 
 
 - name: Download cloud image Debian10
@@ -73,7 +72,7 @@
   when: vm_created.changed
 
 - name: Create debian VM
-  community.general.proxmox_kvm:
+  community.proxmox.proxmox_kvm:
     api_user: "{{ proxmox_api_user }}"
     api_password: "{{ proxmox_api_password }}"
     api_host: "{{ proxmox_api_host }}"
@@ -97,7 +96,6 @@
     vga: std
     cpu: host
     template: yes
-    proxmox_default_behavior: no_defaults     
   register: vm_created 
 
 - name: Download CloudImage Debian11

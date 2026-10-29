@@ -31,7 +31,7 @@
   when: kvm_ip_address is defined and add_local_host
 
 - name: Create new VM with minimal options
-  community.general.proxmox_kvm:
+  community.proxmox.proxmox_kvm:
     api_user: "{{ proxmox_api_user }}"
     api_password: "{{ proxmox_api_password }}"
     api_host: "{{ proxmox_api_host }}"
@@ -41,20 +41,19 @@
     full: true
     format: qcow2
     newid: "{{ kvm_id }}"
-    proxmox_default_behavior: "no_defaults"
+    throttle: 1
 
   register: pve_kvm_virtual_created
   delegate_to: "{{ node }}"
 
 - name: "Post-clone configuration: update virtual machine resources"
-  community.general.proxmox_kvm:
+  community.proxmox.proxmox_kvm:
     update: "{{ pve_kvm_update | default('yes') }}"
     node: "{{ node }}"
     api_user: "{{ proxmox_api_user }}"
     api_password: "{{ proxmox_api_password }}"
     api_host: "{{ proxmox_api_host }}"
     vmid: "{{ kvm_id }}"
-    proxmox_default_behavior: "{{ pve_kvm_proxmox_default_behavior | default('compatibility') }}"
     validate_certs: "{{ pve_kvm_validate_certs | default(omit) }}"
     name: "{{ pve_hostname | default(omit) }}"
     timeout: "{{ pve_kvm_timeout | default(omit) }}"
@@ -182,7 +181,7 @@
   when: kvm_qemu_agent == false
 
 - name: Start VM
-  community.general.proxmox_kvm:
+  community.proxmox.proxmox_kvm:
     api_user: "{{ proxmox_api_user }}"
     api_password: "{{ proxmox_api_password }}"
     api_host: "{{ proxmox_api_host }}"

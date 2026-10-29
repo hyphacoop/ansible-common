@@ -32,7 +32,6 @@ Following are mappings to the ansible proxmox plugin. See  [community.general.pr
 - `proxmox_api_password`:  api_password
 - `proxmox_api_host`:  api_host
 - `kvm_id`:  vmid
-- `pve_kvm_proxmox_default_behavior`: ('compatibility')
 - `pve_kvm_validate_certs`: (undefined) validate_certs
 - `pve_hostname`: (undefined) name
 - `pve_kvm_timeout`: (undefined) timeout
